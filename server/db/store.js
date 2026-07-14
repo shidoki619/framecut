@@ -35,7 +35,7 @@ function saveFileDb() {
 
 async function getBlobStore() {
   if (!blobStore) {
-    const { getStore } = await import('@netlify/blobs');
+    const { getStore } = require('@netlify/blobs');
     blobStore = getStore({ name: 'framecut-data', consistency: 'strong' });
   }
   return blobStore;

@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const store = require('./lib/store');
 const telegram = require('./lib/telegram');
 const orderAdmin = require('./lib/order-admin');
+const botAuth = require('./lib/bot-auth');
 
 const WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET || '';
 
@@ -45,6 +46,43 @@ async function handleStatusChange(chatId, order, status) {
   await telegram.sendMessage(chatId, `✅ Заявка <code>${order.id}</code>\nСтатус: <b>${label}</b>`);
 }
 
+async function sendLockedMessage(chatId) {
+  await telegram.sendMessage(
+    chatId,
+    '🔒 <b>Бот защищён паролем</b>\n\nВведите один раз:\n<code>/unlock ваш_пароль</code>\n\nПосле этого доступ сохранится.'
+  );
+}
+
+async function tryUnlock(chatId, password) {
+  if (botAuth.checkBotPassword(password)) {
+    await botAuth.authorizeBotChat(chatId);
+    await telegram.sendMessage(chatId, '✅ Доступ открыт. Команды: /help');
+    return true;
+  }
+  await telegram.sendMessage(chatId, '❌ Неверный пароль.');
+  return false;
+}
+
+async function ensureBotAuthorized(chatId, text) {
+  if (await botAuth.isBotAuthorized(chatId)) return true;
+
+  const [command, ...args] = text.split(/\s+/);
+  const arg = args.join(' ').trim();
+
+  if (command === '/unlock') {
+    await tryUnlock(chatId, arg);
+    return false;
+  }
+
+  if (command === '/start') {
+    await sendLockedMessage(chatId);
+    return false;
+  }
+
+  await sendLockedMessage(chatId);
+  return false;
+}
+
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return ok();
   if (!verifyWebhookSecret(event)) return forbidden();
@@ -61,6 +99,11 @@ exports.handler = async (event) => {
     const chatId = cb.message?.chat?.id;
     if (!telegram.isConfigured() || !telegram.isAdminChat(chatId)) {
       await answerCallback(cb, 'Нет доступа');
+      return ok();
+    }
+
+    if (!(await botAuth.isBotAuthorized(chatId))) {
+      await answerCallback(cb, 'Сначала /unlock пароль');
       return ok();
     }
 
@@ -101,6 +144,10 @@ exports.handler = async (event) => {
 
   if (!telegram.isAdminChat(chatId)) {
     await telegram.sendMessage(chatId, 'Этот бот только для администратора сайта.');
+    return ok();
+  }
+
+  if (!(await ensureBotAuthorized(chatId, text))) {
     return ok();
   }
 

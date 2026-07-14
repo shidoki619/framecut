@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const { getStore } = require('@netlify/blobs');
 
 function emptyDb() {
-  return { users: {}, usersByEmail: {}, orders: {}, orderIds: [], telegramMap: {} };
+  return { users: {}, usersByEmail: {}, orders: {}, orderIds: [], telegramMap: {}, telegramAuth: {} };
 }
 
 async function blob() {
