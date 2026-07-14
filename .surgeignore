@@ -1,0 +1,5 @@
+server/
+.git/
+.github/
+render.yaml
+gh-auth.log

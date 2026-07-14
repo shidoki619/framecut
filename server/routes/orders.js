@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/', requireAuth, async (req, res) => {
   try {
-    const orders = await Order.find({ userId: req.user._id }).sort({ createdAt: -1 });
+    const orders = await Order.find({ userId: req.user._id });
     res.json({ orders: orders.map(o => o.toPublic()) });
   } catch (err) {
     console.error('Orders list error:', err);

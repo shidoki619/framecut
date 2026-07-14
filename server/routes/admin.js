@@ -9,7 +9,7 @@ router.use(requireAuth, requireAdmin);
 
 router.get('/orders', async (_req, res) => {
   try {
-    const orders = await Order.find().sort({ createdAt: -1 });
+    const orders = await Order.find();
     const userIds = [...new Set(orders.filter(o => o.userId).map(o => o.userId.toString()))];
     const users = await User.find({ _id: { $in: userIds } });
     const userMap = Object.fromEntries(users.map(u => [u._id.toString(), u]));

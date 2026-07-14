@@ -66,7 +66,7 @@ router.post('/login', async (req, res) => {
 
 router.get('/me', requireAuth, async (req, res) => {
   try {
-    const orders = await Order.find({ userId: req.user._id }).sort({ createdAt: -1 });
+    const orders = await Order.find({ userId: req.user._id });
     res.json({
       user: {
         ...req.user.toPublic(),
