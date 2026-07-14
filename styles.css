@@ -1094,173 +1094,173 @@ body {
 
 .thumb-1 { background: linear-gradient(135deg, #312e81, #4c1d95); }
 
-.portfolio-item--youtube {
+.youtube-works {
   grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.youtube-showcase {
+.youtube-channels-strip {
   overflow: hidden;
-  min-height: 320px;
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  padding: 8px 0;
 }
 
-.youtube-orbit-scene {
+.youtube-channels-track {
+  display: flex;
+  gap: 14px;
+  width: max-content;
+  animation: yt-channels-scroll 32s linear infinite;
+}
+
+.youtube-channels-strip:hover .youtube-channels-track {
+  animation-play-state: paused;
+}
+
+.youtube-channel-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px 8px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.youtube-channel-pill img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(139, 92, 246, 0.4);
+}
+
+.youtube-channel-pill span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.youtube-works-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.yt-work-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.yt-work-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+}
+
+.yt-work-thumb {
   position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.yt-work-thumb img {
   width: 100%;
   height: 100%;
-  min-height: 300px;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.yt-work-card:hover .yt-work-thumb img {
+  transform: scale(1.04);
+}
+
+.yt-work-play {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  perspective: 900px;
+  font-size: 2rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transition: var(--transition);
 }
 
-.youtube-orbit-ring {
-  position: absolute;
-  width: 220px;
-  height: 220px;
-  border: 1px dashed rgba(255, 255, 255, 0.12);
-  border-radius: 50%;
-  animation: orbit-ring-pulse 4s ease-in-out infinite;
+.yt-work-card:hover .yt-work-play {
+  opacity: 1;
 }
 
-.youtube-orbit-track {
-  position: relative;
-  width: 0;
-  height: 0;
-  transform-style: preserve-3d;
-  animation: youtube-orbit-spin 28s linear infinite;
-}
-
-.youtube-showcase:hover .youtube-orbit-track {
-  animation-play-state: paused;
-}
-
-.youtube-channel {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 88px;
-  margin-left: -44px;
-  margin-top: -56px;
+.yt-work-body {
+  padding: 18px 20px 20px;
   display: flex;
   flex-direction: column;
+  gap: 10px;
+}
+
+.yt-work-author {
+  display: flex;
   align-items: center;
-  gap: 8px;
-  transform: rotateY(calc(var(--i) * 60deg)) translateZ(130px);
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  animation: youtube-channel-counter 28s linear infinite;
+  gap: 10px;
 }
 
-.youtube-showcase:hover .youtube-channel {
-  animation-play-state: paused;
-}
-
-.youtube-avatar-wrap {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  padding: 3px;
-  background: linear-gradient(135deg, var(--accent), var(--cyan));
-  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.35);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.youtube-channel:hover .youtube-avatar-wrap {
-  transform: scale(1.12);
-  box-shadow: 0 12px 32px rgba(34, 211, 238, 0.45);
-}
-
-.youtube-avatar-wrap img {
-  width: 100%;
-  height: 100%;
+.yt-work-author img {
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   object-fit: cover;
-  display: block;
-  border: 2px solid rgba(10, 10, 15, 0.9);
 }
 
 .youtube-name-badge {
   display: inline-block;
   padding: 4px 10px;
-  background: rgba(10, 10, 15, 0.75);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.35);
   border-radius: 999px;
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  color: var(--text);
-  white-space: nowrap;
-  letter-spacing: 0.02em;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-}
-
-.youtube-orbit-core {
-  position: absolute;
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  z-index: 2;
-  box-shadow: 0 0 40px rgba(139, 92, 246, 0.2);
-}
-
-.youtube-orbit-core-icon {
-  font-size: 1.1rem;
   color: var(--accent-light);
+  white-space: nowrap;
 }
 
-.youtube-orbit-core-label {
-  font-size: 0.6rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
+.yt-work-body h3 {
+  font-size: 0.95rem;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.yt-work-edit {
+  font-size: 0.82rem;
   color: var(--text-muted);
+  line-height: 1.5;
 }
 
-@keyframes youtube-orbit-spin {
-  from { transform: rotateY(0deg); }
-  to { transform: rotateY(360deg); }
+@keyframes yt-channels-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 
-@keyframes youtube-channel-counter {
-  from { transform: rotateY(calc(var(--i) * 60deg)) translateZ(130px) rotateY(0deg); }
-  to { transform: rotateY(calc(var(--i) * 60deg)) translateZ(130px) rotateY(-360deg); }
-}
-
-@keyframes orbit-ring-pulse {
-  0%, 100% { transform: scale(1); opacity: 0.5; }
-  50% { transform: scale(1.06); opacity: 0.9; }
+@media (max-width: 768px) {
+  .youtube-works-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .youtube-orbit-track,
-  .youtube-channel,
-  .youtube-orbit-ring {
+  .youtube-channels-track {
     animation: none;
-  }
-
-  .youtube-orbit-track {
-    display: flex;
     flex-wrap: wrap;
-    width: auto;
-    height: auto;
-    gap: 16px;
+    width: 100%;
     justify-content: center;
-    max-width: 90%;
-  }
-
-  .youtube-channel {
-    position: static;
-    margin: 0;
-    transform: none;
   }
 }
 .thumb-2 { background: linear-gradient(135deg, #0e7490, #155e75); }
