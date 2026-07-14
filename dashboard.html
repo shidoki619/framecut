@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Личный кабинет — FrameCut</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="gradient-orb orb-1"></div>
+  <div class="gradient-orb orb-2"></div>
+
+  <header class="header scrolled">
+    <nav class="nav container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M10 9.5v5l4.5-2.5L10 9.5z" fill="currentColor"/>
+          </svg>
+        </span>
+        FrameCut
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html#services">Услуги</a></li>
+        <li><a href="index.html#portfolio">Портфолио</a></li>
+        <li><a href="index.html#contact">Заказать</a></li>
+      </ul>
+      <div class="nav-auth" id="navAuth"></div>
+      <button class="burger" aria-label="Меню">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+    <div class="mobile-menu"></div>
+  </header>
+
+  <main class="dashboard container">
+    <div class="dashboard-header">
+      <h1>Личный кабинет</h1>
+      <a href="index.html#contact" class="btn btn-primary btn-sm">Новая заявка</a>
+    </div>
+
+    <div class="dashboard-grid">
+      <section class="dashboard-card profile-card">
+        <div class="profile-avatar-wrap">
+          <div class="profile-avatar" id="profileAvatar">
+            <span class="user-avatar-initials" id="avatarInitials"></span>
+          </div>
+          <label class="avatar-upload-btn">
+            <input type="file" id="avatarInput" accept="image/jpeg,image/png,image/webp" hidden>
+            Изменить фото
+          </label>
+          <button type="button" class="avatar-remove-btn" id="removeAvatarBtn" hidden>Удалить</button>
+        </div>
+
+        <form class="profile-form" id="profileForm">
+          <label class="form-field">
+            <span>Имя</span>
+            <input type="text" name="name" id="profileName" required>
+          </label>
+          <label class="form-field">
+            <span>Email</span>
+            <input type="email" id="profileEmail" disabled>
+          </label>
+          <label class="form-field">
+            <span>Telegram</span>
+            <input type="text" name="telegram" id="profileTelegram" placeholder="@username">
+          </label>
+          <p class="form-note success" id="profileNote"></p>
+          <button type="submit" class="btn btn-primary btn-block">Сохранить профиль</button>
+        </form>
+      </section>
+
+      <section class="dashboard-card" id="orders">
+        <div class="dashboard-card-head">
+          <h2>Мои заявки</h2>
+          <span class="orders-count" id="ordersCount">0</span>
+        </div>
+        <div class="orders-layout" id="ordersLayout">
+          <aside class="orders-sidebar" id="ordersSidebar"></aside>
+          <div class="orders-detail" id="ordersDetail">
+            <div class="orders-detail-empty">
+              <p>Выберите обращение слева</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="dashboard-card stats-card">
+        <h2>Статистика</h2>
+        <div class="dash-stats">
+          <div class="dash-stat">
+            <span class="dash-stat-value" id="statTotal">0</span>
+            <span class="dash-stat-label">всего заявок</span>
+          </div>
+          <div class="dash-stat">
+            <span class="dash-stat-value" id="statPending">0</span>
+            <span class="dash-stat-label">в ожидании</span>
+          </div>
+          <div class="dash-stat">
+            <span class="dash-stat-value" id="statDone">0</span>
+            <span class="dash-stat-label">закрыто</span>
+          </div>
+        </div>
+        <p class="dash-member-since">В системе с <span id="memberSince"></span></p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M10 9.5v5l4.5-2.5L10 9.5z" fill="currentColor"/>
+          </svg>
+        </span>
+        FrameCut
+      </a>
+      <p>© 2026 FrameCut. Видеомонтаж и постпродакшн.</p>
+    </div>
+  </footer>
+
+  <div class="modal" id="closeOrderModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal-card" role="dialog" aria-labelledby="closeModalTitle">
+      <div class="modal-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h3 id="closeModalTitle">Закрыть заявку?</h3>
+      <p class="modal-text">Переписка скроется — останется только тема обращения. Открыть заявку снова можно будет только через администратора.</p>
+      <p class="modal-error" id="closeModalError"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="closeModalCancel">Отмена</button>
+        <button type="button" class="btn btn-danger" id="closeModalConfirm">Закрыть заявку</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="cursor-bg.js"></script>
+  <script src="auth.js"></script>
+  <script src="auth-ui.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

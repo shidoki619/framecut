@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход — FrameCut</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-page">
+  <div class="noise"></div>
+  <div class="gradient-orb orb-1"></div>
+  <div class="gradient-orb orb-2"></div>
+
+  <div class="auth-wrap">
+    <a href="index.html" class="logo auth-logo">
+      <span class="logo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M10 9.5v5l4.5-2.5L10 9.5z" fill="currentColor"/>
+        </svg>
+      </span>
+      FrameCut
+    </a>
+
+    <div class="auth-card">
+      <h1>Вход в аккаунт</h1>
+      <p class="auth-subtitle">Войдите, чтобы отслеживать заявки и управлять профилем</p>
+
+      <form class="auth-form" id="loginForm">
+        <label class="form-field">
+          <span>Email</span>
+          <input type="email" name="email" placeholder="you@email.com" required autocomplete="email">
+        </label>
+        <label class="form-field">
+          <span>Пароль</span>
+          <input type="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+        </label>
+        <p class="form-error" id="formError"></p>
+        <button type="submit" class="btn btn-primary btn-block">Войти</button>
+      </form>
+
+      <p class="auth-footer">
+        Нет аккаунта? <a href="register.html">Зарегистрироваться</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="cursor-bg.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const next = params.get('next') || 'dashboard.html';
+
+    Auth.init().then(() => {
+      if (Auth.getCurrentUser()) location.href = next;
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const errorEl = document.getElementById('formError');
+      errorEl.textContent = '';
+
+      const form = e.target;
+      const btn = form.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      btn.textContent = 'Вход...';
+
+      try {
+        await Auth.login({
+          email: form.email.value,
+          password: form.password.value,
+        });
+        location.href = next;
+      } catch (err) {
+        errorEl.textContent = err.message;
+        btn.disabled = false;
+        btn.textContent = 'Войти';
+      }
+    });
+  </script>
+</body>
+</html>

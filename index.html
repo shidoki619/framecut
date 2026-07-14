@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FrameCut — Видеомонтаж</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="gradient-orb orb-1"></div>
+  <div class="gradient-orb orb-2"></div>
+
+  <header class="header">
+    <nav class="nav container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M10 9.5v5l4.5-2.5L10 9.5z" fill="currentColor"/>
+          </svg>
+        </span>
+        FrameCut
+      </a>
+      <ul class="nav-links">
+        <li><a href="#services">Услуги</a></li>
+        <li><a href="#portfolio">Портфолио</a></li>
+        <li><a href="#process">Процесс</a></li>
+        <li><a href="#contact">Контакты</a></li>
+      </ul>
+      <div class="nav-actions">
+        <div class="nav-auth" id="navAuth"></div>
+        <a href="#contact" class="btn btn-primary btn-sm nav-order">Заказать монтаж</a>
+      </div>
+      <button class="burger" aria-label="Меню">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+    <div class="mobile-menu">
+      <a href="#services">Услуги</a>
+      <a href="#portfolio">Портфолио</a>
+      <a href="#process">Процесс</a>
+      <a href="#contact">Контакты</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero container">
+      <div class="hero-content">
+        <div class="badge reveal">
+          <span class="badge-dot"></span>
+          Профессиональный видеомонтаж
+        </div>
+        <h1 class="hero-title reveal">
+          Превращаем сырой материал<br>
+          в <span class="gradient-text">историю</span>
+        </h1>
+        <p class="hero-desc reveal">
+          Монтаж для YouTube, Reels, рекламы и корпоративных роликов.
+          Чистый ритм, цветокоррекция и звук — всё в одном месте.
+        </p>
+        <div class="hero-actions reveal">
+          <a href="#contact" class="btn btn-primary">Обсудить проект</a>
+          <a href="#portfolio" class="btn btn-ghost">Смотреть работы</a>
+        </div>
+        <div class="hero-stats reveal">
+          <div class="stat">
+            <span class="stat-value">20+</span>
+            <span class="stat-label">проектов</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat">
+            <span class="stat-value">72ч</span>
+            <span class="stat-label">средний срок</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat">
+            <span class="stat-value">4K</span>
+            <span class="stat-label">экспорт</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual reveal">
+        <div class="pr-app">
+          <div class="pr-titlebar">
+            <div class="pr-titlebar-left">
+              <span class="pr-logo">Pr</span>
+              <span class="pr-app-name">Adobe Premiere Pro 2026</span>
+            </div>
+            <span class="pr-doc-title">Montage_Client_Final.prproj — FrameCut</span>
+            <div class="pr-win-btns">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <div class="pr-menu">
+            <span>Файл</span>
+            <span>Правка</span>
+            <span>Клип</span>
+            <span>Последовательность</span>
+            <span>Маркеры</span>
+            <span>Графика</span>
+            <span>Вид</span>
+            <span>Окно</span>
+            <span>Справка</span>
+          </div>
+
+          <div class="pr-workspace-bar">
+            <span class="pr-workspace-active">Монтаж</span>
+            <span>Цвет</span>
+            <span>Эффекты</span>
+            <span>Аудио</span>
+            <div class="pr-workspace-spacer"></div>
+            <span class="pr-workspace-hint">Рабочая область: Editing</span>
+          </div>
+
+          <div class="pr-panels">
+            <aside class="pr-panel pr-project">
+              <div class="pr-panel-head">
+                <span>Проект: Montage_Client_Final</span>
+              </div>
+              <div class="pr-panel-search">Поиск</div>
+              <div class="pr-bin active">
+                <span class="pr-bin-icon">▾</span> 01_Исходники
+              </div>
+              <ul class="pr-assets">
+                <li><span class="pr-asset-icon video"></span> interview_01.mp4</li>
+                <li><span class="pr-asset-icon video"></span> broll_office.mp4</li>
+                <li><span class="pr-asset-icon video"></span> drone_shot.mov</li>
+                <li class="selected"><span class="pr-asset-icon video"></span> hero_cut_v2.mp4</li>
+              </ul>
+              <div class="pr-bin">
+                <span class="pr-bin-icon">▸</span> 02_Аудио
+              </div>
+              <div class="pr-bin">
+                <span class="pr-bin-icon">▸</span> 03_Графика
+              </div>
+            </aside>
+
+            <div class="pr-center">
+              <div class="pr-monitor">
+                <div class="pr-monitor-tabs">
+                  <span>Источник</span>
+                  <span class="active">Программа: Sequence 01</span>
+                </div>
+                <div class="pr-program-view">
+                  <div class="pr-safe-margins"></div>
+                  <div class="pr-program-content">
+                    <div class="pr-lower-third">FrameCut · Видеомонтаж</div>
+                  </div>
+                  <div class="pr-playhead-line"></div>
+                </div>
+                <div class="pr-transport">
+                  <span class="pr-tc timecode">00;00;02;14</span>
+                  <div class="pr-transport-btns">
+                    <button type="button" aria-label="Назад">⏮</button>
+                    <button type="button" class="pr-play-btn" aria-label="Воспроизведение">▶</button>
+                    <button type="button" aria-label="Вперёд">⏭</button>
+                  </div>
+                  <span class="pr-tc-end">00;03;45;00</span>
+                </div>
+              </div>
+            </div>
+
+            <aside class="pr-panel pr-inspector">
+              <div class="pr-panel-head">
+                <span>Управление эффектами</span>
+              </div>
+              <div class="pr-fx-group">
+                <div class="pr-fx-title">hero_cut_v2.mp4</div>
+                <div class="pr-fx-row">
+                  <span>Непрозрачность</span>
+                  <div class="pr-slider"><div class="pr-slider-fill" style="width: 100%"></div></div>
+                  <span class="pr-fx-val">100%</span>
+                </div>
+                <div class="pr-fx-row">
+                  <span>Масштаб</span>
+                  <div class="pr-slider"><div class="pr-slider-fill" style="width: 72%"></div></div>
+                  <span class="pr-fx-val">105</span>
+                </div>
+                <div class="pr-fx-row">
+                  <span>Lumetri Color</span>
+                  <div class="pr-slider"><div class="pr-slider-fill pr-slider-cyan" style="width: 58%"></div></div>
+                  <span class="pr-fx-val">ON</span>
+                </div>
+              </div>
+            </aside>
+          </div>
+
+          <div class="pr-timeline-wrap">
+            <div class="pr-timeline-head">
+              <span class="pr-seq-tab active">Sequence 01</span>
+              <span class="pr-seq-tab">Маркеры</span>
+            </div>
+            <div class="pr-timeline-body">
+              <div class="pr-tools">
+                <span class="pr-tool active" title="Выбор">↖</span>
+                <span class="pr-tool" title="Бритва">✂</span>
+                <span class="pr-tool" title="Рука">✋</span>
+                <span class="pr-tool" title="Масштаб">🔍</span>
+              </div>
+              <div class="pr-timeline-main">
+                <div class="pr-ruler">
+                  <span>00:00</span><span>00:15</span><span>00:30</span><span>00:45</span><span>01:00</span><span>01:15</span><span>01:30</span>
+                </div>
+                <div class="pr-tracks">
+                  <div class="pr-track-row">
+                    <span class="pr-track-name">V3</span>
+                    <div class="pr-track-lane">
+                      <div class="pr-clip pr-clip-title" style="--l: 52%; --w: 18%">
+                        <span>lower_third.mogrt</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pr-track-row">
+                    <span class="pr-track-name">V2</span>
+                    <div class="pr-track-lane">
+                      <div class="pr-clip pr-clip-broll" style="--l: 8%; --w: 22%">
+                        <span>broll_office.mp4</span>
+                      </div>
+                      <div class="pr-clip pr-clip-broll" style="--l: 38%; --w: 28%">
+                        <span>drone_shot.mov</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pr-track-row pr-track-selected">
+                    <span class="pr-track-name">V1</span>
+                    <div class="pr-track-lane">
+                      <div class="pr-clip pr-clip-main" style="--l: 2%; --w: 35%">
+                        <span>interview_01.mp4</span>
+                      </div>
+                      <div class="pr-clip pr-clip-main" style="--l: 40%; --w: 30%">
+                        <span>hero_cut_v2.mp4</span>
+                      </div>
+                      <div class="pr-clip pr-clip-main" style="--l: 74%; --w: 20%">
+                        <span>interview_02.mp4</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pr-track-row">
+                    <span class="pr-track-name">A1</span>
+                    <div class="pr-track-lane pr-audio-lane">
+                      <div class="pr-audio-clip" style="--l: 2%; --w: 92%">
+                        <div class="pr-waveform"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pr-track-row">
+                    <span class="pr-track-name">A2</span>
+                    <div class="pr-track-lane pr-audio-lane">
+                      <div class="pr-audio-clip pr-audio-music" style="--l: 5%; --w: 85%">
+                        <div class="pr-waveform pr-waveform-music"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="pr-timeline-playhead">
+                  <div class="pr-playhead-head"></div>
+                  <div class="pr-playhead-shaft"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="services" class="section container">
+      <div class="section-header reveal">
+        <span class="section-tag">Услуги</span>
+        <h2>Что мы монтируем</h2>
+        <p>Подбираем стиль под задачу — от динамичных клипов до спокойных обзоров</p>
+      </div>
+      <div class="cards-grid">
+        <article class="card reveal">
+          <div class="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M2 8h20M8 4v4M16 4v4" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <h3>YouTube &amp; подкасты</h3>
+          <p>Динамичная нарезка, титры, B-roll, заставки и удержание внимания зрителя.</p>
+          <ul class="card-tags">
+            <li>Jump cuts</li>
+            <li>Субтитры</li>
+            <li>Intro/Outro</li>
+          </ul>
+        </article>
+        <article class="card reveal">
+          <div class="card-icon card-icon-accent">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <rect x="5" y="2" width="14" height="20" rx="2" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="12" cy="18" r="1" fill="currentColor"/>
+            </svg>
+          </div>
+          <h3>Reels &amp; Shorts</h3>
+          <p>Вертикальный формат, трендовые переходы, ритм под музыку и хуки в первые 2 секунды.</p>
+          <ul class="card-tags">
+            <li>9:16</li>
+            <li>Тренды</li>
+            <li>Хуки</li>
+          </ul>
+        </article>
+        <article class="card reveal">
+          <div class="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <h3>Реклама &amp; бренд</h3>
+          <p>Ролики для соцсетей и лендингов: чёткий месседж, графика, motion и цветокор.</p>
+          <ul class="card-tags">
+            <li>Motion</li>
+            <li>Цветокор</li>
+            <li>Брендинг</li>
+          </ul>
+        </article>
+        <article class="card reveal">
+          <div class="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3>Свадьбы &amp; события</h3>
+          <p>Эмоциональный сторителлинг, музыкальная подборка и кинематографичная цветокоррекция.</p>
+          <ul class="card-tags">
+            <li>Storytelling</li>
+            <li>Музыка</li>
+            <li>Cinematic</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="portfolio" class="section section-dark">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-tag">Портфолио</span>
+          <h2>Избранные работы</h2>
+          <p>Примеры проектов разных форматов и жанров</p>
+        </div>
+        <div class="portfolio-grid">
+          <article class="portfolio-item reveal" data-category="youtube">
+            <div class="portfolio-thumb thumb-1">
+              <span class="portfolio-duration">12:34</span>
+              <div class="portfolio-play">▶</div>
+            </div>
+            <div class="portfolio-info">
+              <h3>Tech Review Channel</h3>
+              <p>YouTube · Обзор гаджетов</p>
+            </div>
+          </article>
+          <article class="portfolio-item reveal" data-category="reels">
+            <div class="portfolio-thumb thumb-2">
+              <span class="portfolio-duration">0:45</span>
+              <div class="portfolio-play">▶</div>
+            </div>
+            <div class="portfolio-info">
+              <h3>Fitness Brand Reels</h3>
+              <p>Instagram · Рекламная серия</p>
+            </div>
+          </article>
+          <article class="portfolio-item reveal" data-category="ads">
+            <div class="portfolio-thumb thumb-3">
+              <span class="portfolio-duration">1:30</span>
+              <div class="portfolio-play">▶</div>
+            </div>
+            <div class="portfolio-info">
+              <h3>Startup Launch Ad</h3>
+              <p>Реклама · Product video</p>
+            </div>
+          </article>
+          <article class="portfolio-item reveal" data-category="event">
+            <div class="portfolio-thumb thumb-4">
+              <span class="portfolio-duration">4:20</span>
+              <div class="portfolio-play">▶</div>
+            </div>
+            <div class="portfolio-info">
+              <h3>Summer Wedding Film</h3>
+              <p>Событие · Cinematic edit</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="process" class="section container">
+      <div class="section-header reveal">
+        <span class="section-tag">Процесс</span>
+        <h2>Как мы работаем</h2>
+        <p>Прозрачный пайплайн от брифа до финального экспорта</p>
+      </div>
+      <div class="process-steps">
+        <div class="process-step reveal">
+          <div class="step-number">01</div>
+          <div class="step-content">
+            <h3>Бриф</h3>
+            <p>Обсуждаем цель, аудиторию, референсы и дедлайн. Фиксируем ТЗ и смету.</p>
+          </div>
+        </div>
+        <div class="process-step reveal">
+          <div class="step-number">02</div>
+          <div class="step-content">
+            <h3>Черновик</h3>
+            <p>Средний срок сдачи — 72 часа. Вы смотрите черновик и даёте правки по таймкодам.</p>
+          </div>
+        </div>
+        <div class="process-step reveal">
+          <div class="step-number">03</div>
+          <div class="step-content">
+            <h3>Доработка</h3>
+            <p>Цветокор, звук, графика, субтитры. До 2 раундов правок включены.</p>
+          </div>
+        </div>
+        <div class="process-step reveal">
+          <div class="step-number">04</div>
+          <div class="step-content">
+            <h3>Экспорт</h3>
+            <p>Финальный файл в нужном формате: MP4, MOV, ProRes — до 4K 60fps.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tools-bar reveal">
+        <span class="tools-label">Инструменты</span>
+        <div class="tools-list">
+          <span class="tool">Premiere Pro</span>
+          <span class="tool">DaVinci Resolve</span>
+          <span class="tool">After Effects</span>
+          <span class="tool">Audition</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="pricing section container">
+      <div class="section-header reveal">
+        <span class="section-tag">Тарифы</span>
+        <h2>Пакеты монтажа</h2>
+        <p>Ориентировочные цены — точная смета после брифа</p>
+      </div>
+      <div class="pricing-grid">
+        <article class="pricing-card reveal">
+          <h3>Базовый</h3>
+          <div class="price"><span class="price-value">от 3 000 ₽</span><span class="price-unit">/ минута</span></div>
+          <ul class="pricing-features">
+            <li>Нарезка и склейка</li>
+            <li>Базовая цветокоррекция</li>
+            <li>1 раунд правок</li>
+            <li>Экспорт 1080p</li>
+          </ul>
+          <a href="#contact" class="btn btn-ghost btn-block">Выбрать</a>
+        </article>
+        <article class="pricing-card pricing-card-featured reveal">
+          <div class="pricing-badge">Популярный</div>
+          <h3>Стандарт</h3>
+          <div class="price"><span class="price-value">от 5 000 ₽</span><span class="price-unit">/ минута</span></div>
+          <ul class="pricing-features">
+            <li>Всё из Базового</li>
+            <li>Субтитры и графика</li>
+            <li>Звуковой дизайн</li>
+            <li>2 раунда правок</li>
+            <li>Экспорт 4K</li>
+          </ul>
+          <a href="#contact" class="btn btn-primary btn-block">Выбрать</a>
+        </article>
+        <article class="pricing-card reveal">
+          <h3>Премиум</h3>
+          <div class="price"><span class="price-value">от 8 000 ₽</span><span class="price-unit">/ минута</span></div>
+          <ul class="pricing-features">
+            <li>Всё из Стандарта</li>
+            <li>Motion-графика</li>
+            <li>Продвинутый цветокор</li>
+            <li>Неограниченные правки*</li>
+            <li>Приоритетный срок</li>
+          </ul>
+          <a href="#contact" class="btn btn-ghost btn-block">Выбрать</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="contact" class="section container">
+      <div class="contact-wrapper reveal">
+        <div class="contact-info">
+          <span class="section-tag">Контакты</span>
+          <h2>Готовы к монтажу?</h2>
+          <p>Опишите проект — ответим в течение 2 часов с оценкой сроков и стоимости.</p>
+          <div class="contact-links">
+            <a href="mailto:hello@framecut.ru" class="contact-link">
+              <span class="contact-link-icon">✉</span>
+              hello@framecut.ru
+            </a>
+            <a href="https://t.me/framecut" class="contact-link">
+              <span class="contact-link-icon">✈</span>
+              @framecut
+            </a>
+          </div>
+        </div>
+        <form class="contact-form" id="contactForm">
+          <div class="form-row">
+            <label class="form-field">
+              <span>Имя</span>
+              <input type="text" name="name" placeholder="Как к вам обращаться" required>
+            </label>
+            <label class="form-field">
+              <span>Email или Telegram</span>
+              <input type="text" name="contact" placeholder="@username или email" required>
+            </label>
+          </div>
+          <label class="form-field">
+            <span>Тип проекта</span>
+            <select name="type">
+              <option value="youtube">YouTube / подкаст</option>
+              <option value="reels">Reels / Shorts</option>
+              <option value="ads">Реклама</option>
+              <option value="event">Событие / свадьба</option>
+              <option value="other">Другое</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Описание</span>
+            <textarea name="message" rows="4" placeholder="Длительность, дедлайн, референсы..." required></textarea>
+          </label>
+          <button type="submit" class="btn btn-primary btn-block">Отправить заявку</button>
+          <p class="form-note" id="formNote"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M10 9.5v5l4.5-2.5L10 9.5z" fill="currentColor"/>
+          </svg>
+        </span>
+        FrameCut
+      </a>
+      <p>© 2026 FrameCut. Видеомонтаж и постпродакшн.</p>
+    </div>
+  </footer>
+
+  <script src="cursor-bg.js"></script>
+  <script src="auth.js"></script>
+  <script src="auth-ui.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
