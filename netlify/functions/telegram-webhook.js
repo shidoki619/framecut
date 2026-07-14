@@ -84,16 +84,17 @@ async function ensureBotAuthorized(chatId, text) {
 }
 
 exports.handler = async (event) => {
-  store.initFromEvent(event);
-  if (event.httpMethod !== 'POST') return ok();
-  if (!verifyWebhookSecret(event)) return forbidden();
-
-  let update;
   try {
-    update = JSON.parse(event.body || '{}');
-  } catch {
-    return ok();
-  }
+    store.initFromEvent(event);
+    if (event.httpMethod !== 'POST') return ok();
+    if (!verifyWebhookSecret(event)) return forbidden();
+
+    let update;
+    try {
+      update = JSON.parse(event.body || '{}');
+    } catch {
+      return ok();
+    }
 
   if (update.callback_query) {
     const cb = update.callback_query;
@@ -275,5 +276,9 @@ exports.handler = async (event) => {
     return ok();
   }
 
-  return ok();
+    return ok();
+  } catch (err) {
+    console.error('telegram-webhook error:', err);
+    return ok();
+  }
 };

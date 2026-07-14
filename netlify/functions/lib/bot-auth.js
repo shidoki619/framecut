@@ -13,15 +13,11 @@ function checkBotPassword(password) {
 
 async function isBotAuthorized(chatId) {
   if (!BOT_PASSWORD) return true;
-  const db = await store.readDb();
-  return Boolean(db.telegramAuth?.[String(chatId)]);
+  return store.isTelegramChatAuthorized(chatId);
 }
 
 async function authorizeBotChat(chatId) {
-  const db = await store.readDb();
-  if (!db.telegramAuth) db.telegramAuth = {};
-  db.telegramAuth[String(chatId)] = new Date().toISOString();
-  await store.writeDb(db);
+  await store.authorizeTelegramChat(chatId);
 }
 
 module.exports = {

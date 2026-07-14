@@ -195,9 +195,23 @@ async function getOrderIdByTelegramMessage(messageId) {
   return db.telegramMap?.[String(messageId)] || null;
 }
 
+async function isTelegramChatAuthorized(chatId) {
+  const db = await readDb();
+  return Boolean(db.telegramAuth?.[String(chatId)]);
+}
+
+async function authorizeTelegramChat(chatId) {
+  const db = await readDb();
+  if (!db.telegramAuth) db.telegramAuth = {};
+  db.telegramAuth[String(chatId)] = new Date().toISOString();
+  await writeDb(db);
+}
+
 module.exports = {
   initFromEvent,
   readDb,
+  isTelegramChatAuthorized,
+  authorizeTelegramChat,
   publicUser,
   publicOrder,
   findUserByEmail,
