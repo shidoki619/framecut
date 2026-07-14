@@ -2192,21 +2192,22 @@ main {
   display: grid;
   grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
   gap: 20px;
-  align-items: start;
+  align-items: stretch;
 }
 
 .dashboard-sidebar {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  position: sticky;
-  top: 96px;
+  height: 100%;
 }
 
 .orders-card {
-  min-height: 620px;
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 .orders-card-sub {
@@ -2217,7 +2218,8 @@ main {
 
 .orders-card .orders-layout {
   flex: 1;
-  min-height: 520px;
+  min-height: 0;
+  height: 100%;
 }
 
 .dashboard-card {
@@ -2232,6 +2234,7 @@ main {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
+  flex-shrink: 0;
 }
 
 .dashboard-card h2 {
@@ -2311,7 +2314,8 @@ main {
 .orders-layout {
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
-  min-height: 480px;
+  min-height: 0;
+  height: 100%;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
@@ -2325,8 +2329,8 @@ main {
 .orders-sidebar {
   border-right: 1px solid var(--border);
   overflow-y: auto;
-  max-height: none;
   min-height: 0;
+  height: 100%;
 }
 
 .orders-sidebar-item {
@@ -2396,8 +2400,9 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex: 1;
+  min-height: 0;
   height: 100%;
-  min-height: 320px;
   color: var(--text-dim);
   font-size: 0.9rem;
 }
@@ -3036,11 +3041,13 @@ main {
   }
 
   .orders-card {
-    min-height: auto;
+    height: auto;
+    overflow: visible;
   }
 
   .orders-card .orders-layout {
     min-height: 420px;
+    height: auto;
   }
 
   .orders-layout {
