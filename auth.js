@@ -1,6 +1,11 @@
 const Auth = (() => {
   const TOKEN_KEY = 'framecut_token';
-  const API = '/api';
+  const API = (() => {
+    const host = window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1') return '/api';
+    if (host.endsWith('.netlify.app')) return 'https://framecut.onrender.com/api';
+    return '/api';
+  })();
 
   let cachedUser = null;
 
