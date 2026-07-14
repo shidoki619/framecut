@@ -45,39 +45,63 @@
     </div>
 
     <div class="dashboard-grid">
-      <section class="dashboard-card profile-card">
-        <div class="profile-avatar-wrap">
-          <div class="profile-avatar" id="profileAvatar">
-            <span class="user-avatar-initials" id="avatarInitials"></span>
+      <aside class="dashboard-sidebar">
+        <section class="dashboard-card profile-card">
+          <div class="profile-avatar-wrap">
+            <div class="profile-avatar" id="profileAvatar">
+              <span class="user-avatar-initials" id="avatarInitials"></span>
+            </div>
+            <label class="avatar-upload-btn">
+              <input type="file" id="avatarInput" accept="image/jpeg,image/png,image/webp" hidden>
+              Изменить фото
+            </label>
+            <button type="button" class="avatar-remove-btn" id="removeAvatarBtn" hidden>Удалить</button>
           </div>
-          <label class="avatar-upload-btn">
-            <input type="file" id="avatarInput" accept="image/jpeg,image/png,image/webp" hidden>
-            Изменить фото
-          </label>
-          <button type="button" class="avatar-remove-btn" id="removeAvatarBtn" hidden>Удалить</button>
-        </div>
 
-        <form class="profile-form" id="profileForm">
-          <label class="form-field">
-            <span>Имя</span>
-            <input type="text" name="name" id="profileName" required>
-          </label>
-          <label class="form-field">
-            <span>Email</span>
-            <input type="email" id="profileEmail" disabled>
-          </label>
-          <label class="form-field">
-            <span>Telegram</span>
-            <input type="text" name="telegram" id="profileTelegram" placeholder="@username">
-          </label>
-          <p class="form-note success" id="profileNote"></p>
-          <button type="submit" class="btn btn-primary btn-block">Сохранить профиль</button>
-        </form>
-      </section>
+          <form class="profile-form" id="profileForm">
+            <label class="form-field">
+              <span>Имя</span>
+              <input type="text" name="name" id="profileName" required>
+            </label>
+            <label class="form-field">
+              <span>Email</span>
+              <input type="email" id="profileEmail" disabled>
+            </label>
+            <label class="form-field">
+              <span>Telegram</span>
+              <input type="text" name="telegram" id="profileTelegram" placeholder="@username">
+            </label>
+            <p class="form-note success" id="profileNote"></p>
+            <button type="submit" class="btn btn-primary btn-block">Сохранить профиль</button>
+          </form>
+        </section>
 
-      <section class="dashboard-card" id="orders">
+        <section class="dashboard-card stats-card stats-card-compact">
+          <h2>Статистика</h2>
+          <div class="dash-stats">
+            <div class="dash-stat">
+              <span class="dash-stat-label">Всего</span>
+              <span class="dash-stat-value" id="statTotal">0</span>
+            </div>
+            <div class="dash-stat">
+              <span class="dash-stat-label">Ожидают</span>
+              <span class="dash-stat-value" id="statPending">0</span>
+            </div>
+            <div class="dash-stat">
+              <span class="dash-stat-label">Закрыто</span>
+              <span class="dash-stat-value" id="statDone">0</span>
+            </div>
+          </div>
+          <p class="dash-member-since">В системе с <span id="memberSince"></span></p>
+        </section>
+      </aside>
+
+      <section class="dashboard-card orders-card" id="orders">
         <div class="dashboard-card-head">
-          <h2>Мои заявки</h2>
+          <div>
+            <h2>Мои заявки</h2>
+            <p class="orders-card-sub">Выберите заявку слева, переписка откроется справа</p>
+          </div>
           <span class="orders-count" id="ordersCount">0</span>
         </div>
         <div class="orders-layout" id="ordersLayout">
@@ -88,25 +112,6 @@
             </div>
           </div>
         </div>
-      </section>
-
-      <section class="dashboard-card stats-card">
-        <h2>Статистика</h2>
-        <div class="dash-stats">
-          <div class="dash-stat">
-            <span class="dash-stat-value" id="statTotal">0</span>
-            <span class="dash-stat-label">всего заявок</span>
-          </div>
-          <div class="dash-stat">
-            <span class="dash-stat-value" id="statPending">0</span>
-            <span class="dash-stat-label">в ожидании</span>
-          </div>
-          <div class="dash-stat">
-            <span class="dash-stat-value" id="statDone">0</span>
-            <span class="dash-stat-label">закрыто</span>
-          </div>
-        </div>
-        <p class="dash-member-since">В системе с <span id="memberSince"></span></p>
       </section>
     </div>
   </main>

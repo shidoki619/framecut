@@ -63,7 +63,9 @@ async function notifyNewOrder(order) {
     '↩️ <i>Ответьте реплаем — клиент увидит ответ в личном кабинете</i>',
   ].join('\n');
 
-  const result = await sendMessage(ADMIN_CHAT_ID, text);
+  const result = await sendMessage(ADMIN_CHAT_ID, text, {
+    reply_markup: orderKeyboard(order.id),
+  });
   await linkOrderMessage(result, order.id);
 }
 
@@ -81,8 +83,21 @@ async function notifyUserReply(order, messageText) {
     '↩️ <i>Ответьте реплаем на это сообщение</i>',
   ].join('\n');
 
-  const result = await sendMessage(ADMIN_CHAT_ID, text);
+  const result = await sendMessage(ADMIN_CHAT_ID, text, {
+    reply_markup: orderKeyboard(order.id),
+  });
   await linkOrderMessage(result, order.id);
+}
+
+function orderKeyboard(orderId) {
+  return {
+    inline_keyboard: [
+      [
+        { text: '▶️ В работу', callback_data: `work:${orderId}` },
+        { text: '🔒 Закрыть', callback_data: `close:${orderId}` },
+      ],
+    ],
+  };
 }
 
 function escapeHtml(value) {
@@ -98,7 +113,9 @@ module.exports = {
   TYPE_LABELS,
   isConfigured,
   isAdminChat,
+  tg,
   sendMessage,
   notifyNewOrder,
   notifyUserReply,
+  orderKeyboard,
 };
