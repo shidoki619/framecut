@@ -1465,7 +1465,14 @@ main {
   color: var(--text-muted);
 }
 
-/* Pricing */
+/* Pricing + Contact */
+.pricing-contact-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(0, 1.5fr);
+  gap: 28px;
+  align-items: stretch;
+}
+
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1486,10 +1493,34 @@ main {
   border-color: var(--border-hover);
 }
 
-.pricing-card-featured {
+.pricing-card-featured,
+.pricing-card-single {
   border-color: var(--accent);
   background: rgba(139, 92, 246, 0.08);
   box-shadow: 0 0 40px var(--accent-glow);
+}
+
+.pricing-card-single {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.pricing-card-title {
+  font-size: 1.75rem;
+  margin: 12px 0 10px;
+}
+
+.pricing-card-desc {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.pricing-card-single .pricing-features {
+  margin-bottom: 0;
+  flex: 1;
 }
 
 .pricing-badge {
@@ -1548,12 +1579,17 @@ main {
 .contact-wrapper {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 60px;
+  gap: 40px;
   align-items: start;
-  padding: 48px;
+  padding: 40px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
+  height: 100%;
+}
+
+.pricing-contact-grid .contact-wrapper {
+  margin: 0;
 }
 
 .contact-info h2 {
@@ -1723,10 +1759,11 @@ main {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .pricing-grid {
+  .pricing-grid,
+  .pricing-contact-grid {
     grid-template-columns: 1fr;
-    max-width: 400px;
-    margin: 0 auto;
+    max-width: 100%;
+    margin: 0;
   }
 }
 
@@ -1748,6 +1785,11 @@ main {
 
   .process-steps {
     grid-template-columns: 1fr;
+  }
+
+  .pricing-contact-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   .contact-wrapper {
