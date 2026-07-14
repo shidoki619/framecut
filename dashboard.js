@@ -15,6 +15,7 @@ const STATUS_LABELS = {
 let currentUser = null;
 let selectedOrderId = null;
 let pendingCloseOrderId = null;
+let orderPollTimer = null;
 
 const closeModal = document.getElementById('closeOrderModal');
 const closeModalConfirm = document.getElementById('closeModalConfirm');
@@ -328,6 +329,36 @@ function compressImage(file, maxSize = 256) {
   });
 }
 
+function startOrderPolling() {
+  stopOrderPolling();
+  orderPollTimer = setInterval(async () => {
+    if (!currentUser) return;
+    try {
+      const fresh = await Auth.fetchCurrentUser();
+      const prevSelected = currentUser.orders?.find(o => o.id === selectedOrderId);
+      const nextSelected = fresh.orders?.find(o => o.id === selectedOrderId);
+      const changed =
+        (currentUser.orders?.length || 0) !== (fresh.orders?.length || 0) ||
+        prevSelected?.status !== nextSelected?.status ||
+        (prevSelected?.messages?.length || 0) !== (nextSelected?.messages?.length || 0);
+
+      if (changed) {
+        currentUser = fresh;
+        renderOrders(currentUser);
+      }
+    } catch {
+      /* ignore polling errors */
+    }
+  }, 8000);
+}
+
+function stopOrderPolling() {
+  if (orderPollTimer) {
+    clearInterval(orderPollTimer);
+    orderPollTimer = null;
+  }
+}
+
 async function initDashboard() {
   const ok = await Auth.requireAuth();
   if (!ok) return;
@@ -335,6 +366,7 @@ async function initDashboard() {
   currentUser = await Auth.fetchCurrentUser();
   fillProfile(currentUser);
   renderOrders(currentUser);
+  startOrderPolling();
 
   document.getElementById('avatarInput').addEventListener('change', async e => {
     const file = e.target.files[0];

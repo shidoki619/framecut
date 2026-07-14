@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const { getStore } = require('@netlify/blobs');
 
 function emptyDb() {
-  return { users: {}, usersByEmail: {}, orders: {}, orderIds: [] };
+  return { users: {}, usersByEmail: {}, orders: {}, orderIds: [], telegramMap: {} };
 }
 
 async function blob() {
@@ -179,6 +179,18 @@ async function countOrders(status) {
   return status ? orders.filter(o => o.status === status).length : orders.length;
 }
 
+async function linkTelegramMessage(messageId, orderId) {
+  const db = await readDb();
+  if (!db.telegramMap) db.telegramMap = {};
+  db.telegramMap[String(messageId)] = orderId;
+  await writeDb(db);
+}
+
+async function getOrderIdByTelegramMessage(messageId) {
+  const db = await readDb();
+  return db.telegramMap?.[String(messageId)] || null;
+}
+
 module.exports = {
   readDb,
   publicUser,
@@ -192,4 +204,6 @@ module.exports = {
   saveOrder,
   createOrder,
   countOrders,
+  linkTelegramMessage,
+  getOrderIdByTelegramMessage,
 };

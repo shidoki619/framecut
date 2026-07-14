@@ -93,37 +93,60 @@ function animatePlayhead() {
 animateTimecode();
 animatePlayhead();
 
+function getFormType() {
+  return form?.querySelector('input[name="type"]:checked')?.value || 'youtube';
+}
+
+function normalizeTelegram(value) {
+  const raw = value.trim().replace(/^@+/, '');
+  return raw ? `@${raw}` : '';
+}
+
+function stripTelegramForInput(value) {
+  return value.trim().replace(/^@+/, '');
+}
+
 form?.addEventListener('submit', async e => {
   e.preventDefault();
   const btn = form.querySelector('button[type="submit"]');
   btn.disabled = true;
 
   const user = typeof Auth !== 'undefined' ? Auth.getCurrentUser() : null;
+  const telegram = normalizeTelegram(form.contact.value);
+
+  if (!telegram) {
+    formNote.textContent = 'Укажите Telegram username';
+    formNote.classList.remove('success');
+    btn.disabled = false;
+    return;
+  }
 
   try {
     if (user) {
       await Auth.addOrder({
-        type: form.type.value,
+        type: getFormType(),
         message: form.message.value,
-        contact: form.contact.value,
+        contact: telegram,
       });
-      formNote.textContent = 'Заявка сохранена в личном кабинете. Мы свяжемся с вами скоро.';
+      formNote.textContent = 'Заявка сохранена в личном кабинете. Ответ придёт сюда и в Telegram.';
     } else {
       await Auth.submitGuestOrder({
         name: form.name.value,
-        type: form.type.value,
+        type: getFormType(),
         message: form.message.value,
-        contact: form.contact.value,
+        contact: telegram,
       });
-      formNote.textContent = 'Спасибо! Заявка отправлена — мы свяжемся с вами скоро.';
+      formNote.textContent = 'Заявка отправлена! Ответим в Telegram.';
     }
 
     formNote.classList.add('success');
     form.reset();
+    const defaultType = form.querySelector('input[name="type"][value="youtube"]');
+    if (defaultType) defaultType.checked = true;
 
     if (user) {
       form.name.value = user.name;
-      if (user.telegram) form.contact.value = user.telegram;
+      if (user.telegram) form.contact.value = stripTelegramForInput(user.telegram);
     }
   } catch (err) {
     formNote.textContent = err.message;
@@ -142,7 +165,7 @@ if (typeof Auth !== 'undefined') {
     const user = Auth.getCurrentUser();
     if (user && form) {
       if (form.name) form.name.value = user.name;
-      if (form.contact && user.telegram) form.contact.value = user.telegram;
+      if (form.contact && user.telegram) form.contact.value = stripTelegramForInput(user.telegram);
     }
   });
 }

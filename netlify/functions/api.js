@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const store = require('./lib/store');
+const telegram = require('./lib/telegram');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'framecut-netlify-prod-jwt-2026-secure-key';
 const ADMIN_EMAILS = (process.env.ADMIN_EMAIL || 'jlet9lra123321@gmail.com')
@@ -141,6 +142,7 @@ exports.handler = async (event) => {
         type,
         message: message.trim(),
       });
+      await telegram.notifyNewOrder(order).catch(err => console.error('Telegram notify error:', err));
       return json(201, { order: store.publicOrder(order) });
     }
 
@@ -158,6 +160,7 @@ exports.handler = async (event) => {
         type,
         message: message.trim(),
       });
+      await telegram.notifyNewOrder(order).catch(err => console.error('Telegram notify error:', err));
       return json(201, { order: store.publicOrder(order) });
     }
 
@@ -184,14 +187,16 @@ exports.handler = async (event) => {
       const order = await store.findOrder(replyMatch[1]);
       if (!order || order.userId !== user.id) return json(404, { error: 'Заявка не найдена' });
       if (order.status === 'done') return json(403, { error: 'Заявка закрыта. Новые сообщения недоступны.' });
+      const replyText = body.message.trim();
       order.messages.push({
         id: crypto.randomUUID(),
         from: 'user',
-        text: body.message.trim(),
+        text: replyText,
         authorName: user.name,
         createdAt: new Date().toISOString(),
       });
       await store.saveOrder(order);
+      await telegram.notifyUserReply(order, replyText).catch(err => console.error('Telegram notify error:', err));
       return json(200, { order: store.publicOrder(order) });
     }
 

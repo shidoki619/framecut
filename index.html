@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260715">
+  <link rel="stylesheet" href="styles.css?v=20260716">
 </head>
 <body>
   <div class="noise"></div>
@@ -496,7 +496,7 @@
           <div class="step-number">03</div>
           <div class="step-content">
             <h3>Доработка</h3>
-            <p>Цветокор, звук, графика, субтитры. До 2 раундов правок включены.</p>
+            <p>Цветокор, звук, графика, субтитры. 1 раунд правок включён.</p>
           </div>
         </div>
         <div class="process-step reveal">
@@ -533,45 +533,58 @@
           </ul>
         </article>
 
-        <div class="contact-wrapper">
-          <div class="contact-info">
+        <div class="contact-panel">
+          <div class="contact-panel-head">
             <span class="section-tag">Контакты</span>
             <h2>Готовы к монтажу?</h2>
-            <p>Опишите проект — ответим в течение 2 часов с оценкой сроков и стоимости.</p>
-            <div class="contact-links">
-              <a href="https://t.me/egor_montag" class="contact-link" target="_blank" rel="noopener noreferrer">
-                <span class="contact-link-icon">✈</span>
-                @egor_montag
-              </a>
-            </div>
+            <p>Опишите проект — ответим в течение 2 часов.</p>
+            <a href="https://t.me/egor_montag" class="contact-tg-chip" target="_blank" rel="noopener noreferrer">
+              <span>✈</span> @egor_montag
+            </a>
           </div>
           <form class="contact-form" id="contactForm">
-          <div class="form-row">
             <label class="form-field">
               <span>Имя</span>
               <input type="text" name="name" placeholder="Как к вам обращаться" required>
             </label>
             <label class="form-field">
               <span>Telegram</span>
-              <input type="text" name="contact" placeholder="@username" required>
+              <div class="input-prefix-wrap">
+                <span class="input-prefix">@</span>
+                <input type="text" name="contact" placeholder="username" required autocomplete="off">
+              </div>
             </label>
-          </div>
-          <label class="form-field">
-            <span>Тип проекта</span>
-            <select name="type">
-              <option value="youtube">YouTube / подкаст</option>
-              <option value="reels">Reels / Shorts</option>
-              <option value="ads">Реклама</option>
-              <option value="event">Событие / свадьба</option>
-              <option value="other">Другое</option>
-            </select>
-          </label>
-          <label class="form-field">
-            <span>Описание</span>
-            <textarea name="message" rows="4" placeholder="Длительность, дедлайн, референсы..." required></textarea>
-          </label>
-          <button type="submit" class="btn btn-primary btn-block">Отправить заявку</button>
-          <p class="form-note" id="formNote"></p>
+            <div class="form-field">
+              <span>Тип проекта</span>
+              <div class="type-pills" role="radiogroup" aria-label="Тип проекта">
+                <label class="type-pill">
+                  <input type="radio" name="type" value="youtube" checked>
+                  <span>YouTube</span>
+                </label>
+                <label class="type-pill">
+                  <input type="radio" name="type" value="reels">
+                  <span>Reels</span>
+                </label>
+                <label class="type-pill">
+                  <input type="radio" name="type" value="ads">
+                  <span>Реклама</span>
+                </label>
+                <label class="type-pill">
+                  <input type="radio" name="type" value="event">
+                  <span>Событие</span>
+                </label>
+                <label class="type-pill">
+                  <input type="radio" name="type" value="other">
+                  <span>Другое</span>
+                </label>
+              </div>
+            </div>
+            <label class="form-field">
+              <span>Описание проекта</span>
+              <textarea name="message" rows="4" placeholder="Длительность, дедлайн, референсы..." required></textarea>
+            </label>
+            <button type="submit" class="btn btn-primary btn-block">Отправить заявку</button>
+            <p class="form-note" id="formNote"></p>
           </form>
         </div>
       </div>
@@ -593,9 +606,9 @@
     </div>
   </footer>
 
-  <script src="cursor-bg.js?v=20260715"></script>
-  <script src="auth.js?v=20260715"></script>
-  <script src="auth-ui.js?v=20260715"></script>
-  <script src="script.js?v=20260715"></script>
+  <script src="cursor-bg.js?v=20260716"></script>
+  <script src="auth.js?v=20260716"></script>
+  <script src="auth-ui.js?v=20260716"></script>
+  <script src="script.js?v=20260716"></script>
 </body>
 </html>
