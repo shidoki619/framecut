@@ -542,11 +542,14 @@
               <span>✈</span> @egor_montag
             </a>
           </div>
+          <div class="contact-login-gate" id="contactLoginGate" hidden>
+            <p>Чтобы оставить заявку, нужен аккаунт</p>
+            <div class="contact-login-actions">
+              <a href="login.html?next=index.html%23contact" class="btn btn-primary btn-sm">Войти</a>
+              <a href="register.html" class="btn btn-ghost btn-sm">Регистрация</a>
+            </div>
+          </div>
           <form class="contact-form" id="contactForm">
-            <label class="form-field">
-              <span>Имя</span>
-              <input type="text" name="name" placeholder="Как к вам обращаться" required>
-            </label>
             <label class="form-field">
               <span>Telegram</span>
               <div class="input-prefix-wrap">
@@ -606,9 +609,10 @@
     </div>
   </footer>
 
-  <script src="cursor-bg.js?v=20260716"></script>
-  <script src="auth.js?v=20260716"></script>
-  <script src="auth-ui.js?v=20260716"></script>
-  <script src="script.js?v=20260716"></script>
+  <script src="cursor-bg.js?v=20260717"></script>
+  <script src="auth.js?v=20260717"></script>
+  <script src="gate.js?v=20260717"></script>
+  <script src="auth-ui.js?v=20260717"></script>
+  <script src="script.js?v=20260717"></script>
 </body>
 </html>

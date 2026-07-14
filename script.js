@@ -106,14 +106,35 @@ function stripTelegramForInput(value) {
   return value.trim().replace(/^@+/, '');
 }
 
+function updateContactFormAuth() {
+  const gate = document.getElementById('contactLoginGate');
+  if (!form) return;
+
+  const user = typeof Auth !== 'undefined' ? Auth.getCurrentUser() : null;
+  if (user) {
+    gate?.setAttribute('hidden', '');
+    form.hidden = false;
+    if (form.contact && user.telegram) {
+      form.contact.value = stripTelegramForInput(user.telegram);
+    }
+  } else {
+    gate?.removeAttribute('hidden');
+    form.hidden = true;
+  }
+}
+
 form?.addEventListener('submit', async e => {
   e.preventDefault();
   const btn = form.querySelector('button[type="submit"]');
   btn.disabled = true;
 
   const user = typeof Auth !== 'undefined' ? Auth.getCurrentUser() : null;
-  const telegram = normalizeTelegram(form.contact.value);
+  if (!user) {
+    window.location.href = 'login.html?next=index.html%23contact';
+    return;
+  }
 
+  const telegram = normalizeTelegram(form.contact.value);
   if (!telegram) {
     formNote.textContent = 'Укажите Telegram username';
     formNote.classList.remove('success');
@@ -122,32 +143,17 @@ form?.addEventListener('submit', async e => {
   }
 
   try {
-    if (user) {
-      await Auth.addOrder({
-        type: getFormType(),
-        message: form.message.value,
-        contact: telegram,
-      });
-      formNote.textContent = 'Заявка сохранена в личном кабинете. Ответ придёт сюда и в Telegram.';
-    } else {
-      await Auth.submitGuestOrder({
-        name: form.name.value,
-        type: getFormType(),
-        message: form.message.value,
-        contact: telegram,
-      });
-      formNote.textContent = 'Заявка отправлена! Ответим в Telegram.';
-    }
-
+    await Auth.addOrder({
+      type: getFormType(),
+      message: form.message.value,
+      contact: telegram,
+    });
+    formNote.textContent = 'Заявка сохранена в личном кабинете. Ответ придёт сюда и в Telegram.';
     formNote.classList.add('success');
     form.reset();
     const defaultType = form.querySelector('input[name="type"][value="youtube"]');
     if (defaultType) defaultType.checked = true;
-
-    if (user) {
-      form.name.value = user.name;
-      if (user.telegram) form.contact.value = stripTelegramForInput(user.telegram);
-    }
+    if (user.telegram) form.contact.value = stripTelegramForInput(user.telegram);
   } catch (err) {
     formNote.textContent = err.message;
     formNote.classList.remove('success');
@@ -162,11 +168,7 @@ form?.addEventListener('submit', async e => {
 
 if (typeof Auth !== 'undefined') {
   Auth.init().then(() => {
-    const user = Auth.getCurrentUser();
-    if (user && form) {
-      if (form.name) form.name.value = user.name;
-      if (form.contact && user.telegram) form.contact.value = stripTelegramForInput(user.telegram);
-    }
+    updateContactFormAuth();
   });
 }
 

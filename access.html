@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Вход — FrameCut</title>
+  <title>Доступ — FrameCut</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -26,40 +26,31 @@
     </a>
 
     <div class="auth-card">
-      <h1>Вход в аккаунт</h1>
-      <p class="auth-subtitle">Войдите, чтобы отслеживать заявки и управлять профилем</p>
+      <h1>Доступ к сайту</h1>
+      <p class="auth-subtitle">Введите пароль один раз — дальше вход сохранится на этом устройстве</p>
 
-      <form class="auth-form" id="loginForm">
+      <form class="auth-form" id="accessForm">
         <label class="form-field">
-          <span>Email</span>
-          <input type="email" name="email" placeholder="you@email.com" required autocomplete="email">
-        </label>
-        <label class="form-field">
-          <span>Пароль</span>
-          <input type="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+          <span>Пароль доступа</span>
+          <input type="password" name="password" placeholder="••••••••" required autocomplete="off">
         </label>
         <p class="form-error" id="formError"></p>
-        <button type="submit" class="btn btn-primary btn-block">Войти</button>
+        <button type="submit" class="btn btn-primary btn-block">Войти на сайт</button>
       </form>
-
-      <p class="auth-footer">
-        Нет аккаунта? <a href="register.html">Зарегистрироваться</a>
-      </p>
     </div>
   </div>
 
   <script src="cursor-bg.js"></script>
   <script src="auth.js"></script>
-  <script src="gate.js"></script>
   <script>
     const params = new URLSearchParams(location.search);
-    const next = params.get('next') || 'dashboard.html';
+    const next = params.get('next') || 'index.html';
 
-    Auth.init().then(() => {
-      if (Auth.getCurrentUser()) location.href = next;
-    });
+    if (Auth.hasSiteAccess()) {
+      location.replace(next);
+    }
 
-    document.getElementById('loginForm').addEventListener('submit', async e => {
+    document.getElementById('accessForm').addEventListener('submit', async e => {
       e.preventDefault();
       const errorEl = document.getElementById('formError');
       errorEl.textContent = '';
@@ -67,18 +58,15 @@
       const form = e.target;
       const btn = form.querySelector('button[type="submit"]');
       btn.disabled = true;
-      btn.textContent = 'Вход...';
+      btn.textContent = 'Проверка...';
 
       try {
-        await Auth.login({
-          email: form.email.value,
-          password: form.password.value,
-        });
-        location.href = next;
+        await Auth.verifySiteAccess(form.password.value);
+        location.replace(next);
       } catch (err) {
         errorEl.textContent = err.message;
         btn.disabled = false;
-        btn.textContent = 'Войти';
+        btn.textContent = 'Войти на сайт';
       }
     });
   </script>

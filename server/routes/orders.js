@@ -39,28 +39,8 @@ router.post('/', requireAuth, async (req, res) => {
   }
 });
 
-router.post('/guest', async (req, res) => {
-  try {
-    const { name, type, message, contact } = req.body;
-
-    if (!name?.trim() || !type || !message?.trim() || !contact?.trim()) {
-      return res.status(400).json({ error: 'Заполните все поля заявки' });
-    }
-
-    const text = message.trim();
-    const order = await Order.create({
-      name: name.trim(),
-      contact: contact.trim(),
-      type,
-      message: text,
-      messages: [],
-    });
-
-    res.status(201).json({ order: order.toPublic() });
-  } catch (err) {
-    console.error('Guest order error:', err);
-    res.status(500).json({ error: 'Ошибка сервера' });
-  }
+router.post('/guest', (_req, res) => {
+  res.status(403).json({ error: 'Заявки доступны только авторизованным пользователям.' });
 });
 
 router.patch('/:id/close', requireAuth, async (req, res) => {

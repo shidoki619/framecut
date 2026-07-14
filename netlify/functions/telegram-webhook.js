@@ -3,8 +3,21 @@ const store = require('./lib/store');
 const telegram = require('./lib/telegram');
 const orderAdmin = require('./lib/order-admin');
 
+const WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET || '';
+
 function ok() {
   return { statusCode: 200, body: 'ok' };
+}
+
+function forbidden() {
+  return { statusCode: 403, body: 'forbidden' };
+}
+
+function verifyWebhookSecret(event) {
+  if (!WEBHOOK_SECRET) return true;
+  const header = event.headers?.['x-telegram-bot-api-secret-token']
+    || event.headers?.['X-Telegram-Bot-Api-Secret-Token'];
+  return header === WEBHOOK_SECRET;
 }
 
 async function addAdminReply(order, text) {
@@ -34,6 +47,7 @@ async function handleStatusChange(chatId, order, status) {
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return ok();
+  if (!verifyWebhookSecret(event)) return forbidden();
 
   let update;
   try {

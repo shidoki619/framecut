@@ -1,5 +1,6 @@
 const Auth = (() => {
   const TOKEN_KEY = 'framecut_token';
+  const ACCESS_TOKEN_KEY = 'framecut_access';
   const API = '/api';
 
   let cachedUser = null;
@@ -13,10 +14,25 @@ const Auth = (() => {
     else localStorage.removeItem(TOKEN_KEY);
   }
 
+  function getAccessToken() {
+    return localStorage.getItem(ACCESS_TOKEN_KEY);
+  }
+
+  function setAccessToken(token) {
+    if (token) localStorage.setItem(ACCESS_TOKEN_KEY, token);
+    else localStorage.removeItem(ACCESS_TOKEN_KEY);
+  }
+
+  function hasSiteAccess() {
+    return Boolean(getAccessToken());
+  }
+
   async function request(path, options = {}) {
     const headers = { 'Content-Type': 'application/json', ...options.headers };
     const token = getToken();
+    const accessToken = getAccessToken();
     if (token) headers.Authorization = `Bearer ${token}`;
+    if (accessToken) headers['X-Site-Access'] = accessToken;
 
     let res;
     try {
@@ -34,6 +50,15 @@ const Auth = (() => {
       throw new Error(data.error || 'Ошибка сервера');
     }
     return data;
+  }
+
+  async function verifySiteAccess(password) {
+    const data = await request('/auth/site-access', {
+      method: 'POST',
+      body: JSON.stringify({ password }),
+    });
+    setAccessToken(data.accessToken);
+    return true;
   }
 
   async function register({ name, email, password }) {
@@ -99,14 +124,6 @@ const Auth = (() => {
     if (cachedUser) {
       cachedUser.orders = [data.order, ...(cachedUser.orders || [])];
     }
-    return data.order;
-  }
-
-  async function submitGuestOrder(order) {
-    const data = await request('/orders/guest', {
-      method: 'POST',
-      body: JSON.stringify(order),
-    });
     return data.order;
   }
 
@@ -194,11 +211,12 @@ const Auth = (() => {
     register,
     login,
     logout,
+    verifySiteAccess,
+    hasSiteAccess,
     fetchCurrentUser,
     getCurrentUser,
     updateProfile,
     addOrder,
-    submitGuestOrder,
     getInitials,
     isAdmin,
     requireAuth,

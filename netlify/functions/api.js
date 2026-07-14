@@ -5,6 +5,7 @@ const store = require('./lib/store');
 const telegram = require('./lib/telegram');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'framecut-netlify-prod-jwt-2026-secure-key';
+const SITE_ACCESS_CODE = process.env.SITE_ACCESS_CODE || '';
 const ADMIN_EMAILS = (process.env.ADMIN_EMAIL || 'jlet9lra123321@gmail.com')
   .split(',')
   .map(e => e.trim().toLowerCase())
@@ -36,7 +37,36 @@ function parseBody(event) {
 }
 
 function signToken(userId) {
-  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '7d' });
+  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '365d' });
+}
+
+function signSiteAccessToken() {
+  return jwt.sign({ type: 'site_access' }, JWT_SECRET, { expiresIn: '10y' });
+}
+
+function getSiteAccessHeader(event) {
+  return event.headers?.['x-site-access']
+    || event.headers?.['X-Site-Access']
+    || null;
+}
+
+function hasValidSiteAccess(event) {
+  const token = getSiteAccessHeader(event);
+  if (!token) return false;
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    return payload.type === 'site_access';
+  } catch {
+    return false;
+  }
+}
+
+function checkSitePassword(password) {
+  if (!SITE_ACCESS_CODE) return false;
+  const input = String(password || '');
+  const expected = SITE_ACCESS_CODE;
+  if (input.length !== expected.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(input), Buffer.from(expected));
 }
 
 async function authUser(event) {
@@ -65,7 +95,20 @@ exports.handler = async (event) => {
       return json(200, { ok: true, db: 'netlify-blobs' });
     }
 
+    if (method === 'POST' && path === '/api/auth/site-access') {
+      if (!SITE_ACCESS_CODE) {
+        return json(503, { error: 'Пароль доступа не настроен на сервере.' });
+      }
+      if (!checkSitePassword(body.password)) {
+        return json(403, { error: 'Неверный пароль доступа.' });
+      }
+      return json(200, { accessToken: signSiteAccessToken() });
+    }
+
     if (method === 'POST' && path === '/api/auth/register') {
+      if (!hasValidSiteAccess(event)) {
+        return json(403, { error: 'Сначала введите пароль доступа к сайту.' });
+      }
       const { name, email, password } = body;
       if (!name?.trim() || !email?.trim() || !password || password.length < 6) {
         return json(400, { error: 'Заполните все поля. Пароль — минимум 6 символов.' });
@@ -85,6 +128,9 @@ exports.handler = async (event) => {
     }
 
     if (method === 'POST' && path === '/api/auth/login') {
+      if (!hasValidSiteAccess(event)) {
+        return json(403, { error: 'Сначала введите пароль доступа к сайту.' });
+      }
       const normalizedEmail = body.email?.trim().toLowerCase();
       const user = await store.findUserByEmail(normalizedEmail);
       if (!user || !(await bcrypt.compare(body.password || '', user.password))) {
@@ -132,18 +178,7 @@ exports.handler = async (event) => {
     }
 
     if (method === 'POST' && path === '/api/orders/guest') {
-      const { name, type, message, contact } = body;
-      if (!name?.trim() || !type || !message?.trim() || !contact?.trim()) {
-        return json(400, { error: 'Заполните все поля заявки' });
-      }
-      const order = await store.createOrder({
-        name: name.trim(),
-        contact: contact.trim(),
-        type,
-        message: message.trim(),
-      });
-      await telegram.notifyNewOrder(order).catch(err => console.error('Telegram notify error:', err));
-      return json(201, { order: store.publicOrder(order) });
+      return json(403, { error: 'Заявки доступны только авторизованным пользователям.' });
     }
 
     if (method === 'POST' && path === '/api/orders') {
