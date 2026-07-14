@@ -92,5 +92,5 @@ function renderNavAuth() {
 document.addEventListener('DOMContentLoaded', async () => {
   await Auth.init();
   renderNavAuth();
-  if (typeof updateContactFormAuth === 'function') updateContactFormAuth();
+  if (typeof prefillContactForm === 'function') prefillContactForm();
 });

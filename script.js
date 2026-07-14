@@ -106,40 +106,45 @@ function stripTelegramForInput(value) {
   return value.trim().replace(/^@+/, '');
 }
 
-function updateContactFormAuth() {
-  const gate = document.getElementById('contactLoginGate');
-  if (!form) return;
+const ORDER_DRAFT_KEY = 'framecut_order_draft';
 
+function saveOrderDraft() {
+  sessionStorage.setItem(ORDER_DRAFT_KEY, JSON.stringify({
+    contact: form.contact?.value || '',
+    type: getFormType(),
+    message: form.message?.value || '',
+  }));
+}
+
+function applyOrderDraft(draft) {
+  if (!draft || !form) return;
+  if (form.contact && draft.contact) {
+    form.contact.value = stripTelegramForInput(draft.contact);
+  }
+  if (draft.type) {
+    const typeInput = form.querySelector(`input[name="type"][value="${draft.type}"]`);
+    if (typeInput) typeInput.checked = true;
+  }
+  if (form.message && draft.message) form.message.value = draft.message;
+}
+
+function prefillContactForm() {
+  if (!form) return;
   const user = typeof Auth !== 'undefined' ? Auth.getCurrentUser() : null;
-  if (user) {
-    gate?.setAttribute('hidden', '');
-    form.hidden = false;
-    if (form.contact && user.telegram) {
-      form.contact.value = stripTelegramForInput(user.telegram);
-    }
-  } else {
-    gate?.removeAttribute('hidden');
-    form.hidden = true;
+  if (user?.telegram && form.contact) {
+    form.contact.value = stripTelegramForInput(user.telegram);
   }
 }
 
-form?.addEventListener('submit', async e => {
-  e.preventDefault();
-  const btn = form.querySelector('button[type="submit"]');
-  btn.disabled = true;
-
-  const user = typeof Auth !== 'undefined' ? Auth.getCurrentUser() : null;
-  if (!user) {
-    window.location.href = 'login.html?next=index.html%23contact';
-    return;
-  }
+async function submitOrderFromForm() {
+  const user = Auth.getCurrentUser();
+  if (!user) return false;
 
   const telegram = normalizeTelegram(form.contact.value);
   if (!telegram) {
     formNote.textContent = 'Укажите Telegram username';
     formNote.classList.remove('success');
-    btn.disabled = false;
-    return;
+    return true;
   }
 
   try {
@@ -159,16 +164,46 @@ form?.addEventListener('submit', async e => {
     formNote.classList.remove('success');
   }
 
-  btn.disabled = false;
   setTimeout(() => {
     formNote.textContent = '';
     formNote.classList.remove('success');
   }, 5000);
+  return true;
+}
+
+form?.addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = form.querySelector('button[type="submit"]');
+  btn.disabled = true;
+
+  const user = typeof Auth !== 'undefined' ? Auth.getCurrentUser() : null;
+  if (!user) {
+    saveOrderDraft();
+    window.location.href = `register.html?next=${encodeURIComponent('index.html#contact')}`;
+    return;
+  }
+
+  await submitOrderFromForm();
+  btn.disabled = false;
 });
 
 if (typeof Auth !== 'undefined') {
-  Auth.init().then(() => {
-    updateContactFormAuth();
+  Auth.init().then(async () => {
+    prefillContactForm();
+
+    const draftRaw = sessionStorage.getItem(ORDER_DRAFT_KEY);
+    if (!draftRaw) return;
+
+    const draft = JSON.parse(draftRaw);
+    applyOrderDraft(draft);
+
+    if (Auth.getCurrentUser() && location.hash === '#contact') {
+      sessionStorage.removeItem(ORDER_DRAFT_KEY);
+      const btn = form?.querySelector('button[type="submit"]');
+      if (btn) btn.disabled = true;
+      await submitOrderFromForm();
+      if (btn) btn.disabled = false;
+    }
   });
 }
 

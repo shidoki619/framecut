@@ -60,8 +60,11 @@
   <script src="auth.js"></script>
 
   <script>
+    const params = new URLSearchParams(location.search);
+    const next = params.get('next') || 'dashboard.html';
+
     Auth.init().then(() => {
-      if (Auth.getCurrentUser()) location.href = 'dashboard.html';
+      if (Auth.getCurrentUser()) location.href = next;
     });
 
     document.getElementById('registerForm').addEventListener('submit', async e => {
@@ -85,7 +88,7 @@
           email: form.email.value,
           password: form.password.value,
         });
-        location.href = 'dashboard.html';
+        location.href = next;
       } catch (err) {
         errorEl.textContent = err.message;
         btn.disabled = false;
