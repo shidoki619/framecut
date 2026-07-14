@@ -56,6 +56,7 @@ function isAdmin(email) {
 }
 
 exports.handler = async (event) => {
+  store.initFromEvent(event);
   const path = normalizePath(event);
   const method = event.httpMethod;
   const body = parseBody(event);

@@ -1,14 +1,18 @@
 const crypto = require('crypto');
-const { getStore } = require('@netlify/blobs');
+const { connectLambda, getStore } = require('@netlify/blobs');
 
 function emptyDb() {
   return { users: {}, usersByEmail: {}, orders: {}, orderIds: [], telegramMap: {}, telegramAuth: {} };
 }
 
+function initFromEvent(event) {
+  if (event) connectLambda(event);
+}
+
 async function blob() {
   const opts = { name: 'framecut-data', consistency: 'strong' };
   const siteID = process.env.SITE_ID || process.env.NETLIFY_SITE_ID;
-  const token = process.env.NETLIFY_AUTH_TOKEN || process.env.NETLIFY_TOKEN;
+  const token = process.env.BLOBS_TOKEN || process.env.NETLIFY_TOKEN;
   if (siteID && token) {
     opts.siteID = siteID;
     opts.token = token;
@@ -192,6 +196,7 @@ async function getOrderIdByTelegramMessage(messageId) {
 }
 
 module.exports = {
+  initFromEvent,
   readDb,
   publicUser,
   publicOrder,

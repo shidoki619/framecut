@@ -84,6 +84,7 @@ async function ensureBotAuthorized(chatId, text) {
 }
 
 exports.handler = async (event) => {
+  store.initFromEvent(event);
   if (event.httpMethod !== 'POST') return ok();
   if (!verifyWebhookSecret(event)) return forbidden();
 
