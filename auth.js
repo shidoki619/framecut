@@ -22,7 +22,7 @@ const Auth = (() => {
     try {
       res = await fetch(`${API}${path}`, { ...options, headers });
     } catch {
-      throw new Error('Сервер недоступен. Запустите: cd server && npm start');
+      throw new Error('Сервер недоступен. Попробуйте позже.');
     }
 
     const data = await res.json().catch(() => ({}));
