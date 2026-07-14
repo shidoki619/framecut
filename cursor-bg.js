@@ -16,6 +16,8 @@
   const ctx = canvas.getContext('2d');
   const orb1 = document.querySelector('.orb-1');
   const orb2 = document.querySelector('.orb-2');
+  const bgFloor = document.querySelector('.bg-3d-floor');
+  const root = document.documentElement;
 
   let w = 0;
   let h = 0;
@@ -27,6 +29,7 @@
   const particles = Array.from({ length: 48 }, () => ({
     x: Math.random(),
     y: Math.random(),
+    z: Math.random(),
     size: 1 + Math.random() * 1.8,
     alpha: 0.15 + Math.random() * 0.35,
     drift: 0.02 + Math.random() * 0.04,
@@ -46,8 +49,8 @@
   document.addEventListener('mousemove', e => {
     mx = e.clientX;
     my = e.clientY;
-    document.documentElement.style.setProperty('--cursor-x', `${mx}px`);
-    document.documentElement.style.setProperty('--cursor-y', `${my}px`);
+    root.style.setProperty('--cursor-x', `${mx}px`);
+    root.style.setProperty('--cursor-y', `${my}px`);
   });
 
   document.addEventListener('mouseleave', () => {
@@ -62,11 +65,48 @@
     ctx.fillRect(0, 0, w, h);
   }
 
+  function drawPerspectiveGrid(vpX, vpY) {
+    const hLines = 22;
+    const vLines = 28;
+
+    for (let i = 0; i <= hLines; i++) {
+      const t = i / hLines;
+      const y = vpY + (h - vpY) * Math.pow(t, 1.45);
+      const spread = 0.04 + t * 0.62;
+      const leftX = vpX - w * spread;
+      const rightX = vpX + w * spread;
+      const alpha = 0.015 + t * 0.07;
+
+      ctx.strokeStyle = `rgba(167, 139, 250, ${alpha})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(leftX, y);
+      ctx.lineTo(rightX, y);
+      ctx.stroke();
+    }
+
+    for (let i = -vLines; i <= vLines; i++) {
+      const t = i / vLines;
+      const endX = vpX + t * w * 1.15;
+      const alpha = 0.02 + (1 - Math.abs(t)) * 0.05;
+
+      ctx.strokeStyle = `rgba(34, 211, 238, ${alpha})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(vpX, vpY);
+      ctx.lineTo(endX, h + 20);
+      ctx.stroke();
+    }
+  }
+
   function animate() {
     cx += (mx - cx) * 0.09;
     cy += (my - cy) * 0.09;
 
     ctx.clearRect(0, 0, w, h);
+
+    const vpX = cx;
+    const vpY = cy * 0.42 + h * 0.08;
 
     drawGlow(cx, cy, Math.min(w, h) * 0.35, [
       [0, 'rgba(139, 92, 246, 0.2)'],
@@ -85,34 +125,34 @@
       [1, 'transparent'],
     ]);
 
+    drawPerspectiveGrid(vpX, vpY);
+
     particles.forEach(p => {
+      const depth = 0.35 + p.z * 0.65;
       const baseX = p.x * w;
-      const baseY = p.y * h;
-      const px = baseX + (cx - baseX) * p.drift;
-      const py = baseY + (cy - baseY) * p.drift;
+      const baseY = p.y * h * 0.6 + h * 0.35;
+      const px = baseX + (cx - baseX) * p.drift * depth;
+      const py = baseY + (cy - baseY) * p.drift * depth * 0.5;
+      const size = p.size * (0.6 + depth * 0.8);
 
       ctx.beginPath();
-      ctx.arc(px, py, p.size, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(167, 139, 250, ${p.alpha})`;
+      ctx.arc(px, py, size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(167, 139, 250, ${p.alpha * depth})`;
       ctx.fill();
     });
 
-    const gridStep = 48;
-    const offsetX = ((cx - w * 0.5) * 0.04) % gridStep;
+    const gridStep = 72;
+    const offsetX = ((cx - w * 0.5) * 0.06) % gridStep;
     const offsetY = ((cy - h * 0.5) * 0.04) % gridStep;
+    root.style.setProperty('--grid-offset-x', `${offsetX}px`);
+    root.style.setProperty('--grid-offset-y', `${offsetY}px`);
+    root.style.setProperty('--bg-rotate-y', `${((cx / w) - 0.5) * 10}deg`);
 
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.025)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    for (let x = offsetX; x < w; x += gridStep) {
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, h);
+    if (bgFloor) {
+      const tiltX = 74 + ((cy / h) - 0.5) * 6;
+      const tiltY = ((cx / w) - 0.5) * 10;
+      bgFloor.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
     }
-    for (let y = offsetY; y < h; y += gridStep) {
-      ctx.moveTo(0, y);
-      ctx.lineTo(w, y);
-    }
-    ctx.stroke();
 
     const orbShiftX = (cx / w - 0.5) * 80;
     const orbShiftY = (cy / h - 0.5) * 60;
@@ -129,7 +169,7 @@
 
   resize();
   window.addEventListener('resize', resize);
-  document.documentElement.style.setProperty('--cursor-x', '50%');
-  document.documentElement.style.setProperty('--cursor-y', '50%');
+  root.style.setProperty('--cursor-x', '50%');
+  root.style.setProperty('--cursor-y', '50%');
   animate();
 })();

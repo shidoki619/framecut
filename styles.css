@@ -58,6 +58,65 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+.bg-3d {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  perspective: 900px;
+  perspective-origin: var(--cursor-x, 50%) 38%;
+}
+
+.bg-3d-floor {
+  position: absolute;
+  left: -60%;
+  right: -60%;
+  bottom: -35%;
+  height: 140%;
+  transform-origin: 50% 100%;
+  transform: rotateX(74deg) rotateY(var(--bg-rotate-y, 0deg));
+  background:
+    linear-gradient(to top, rgba(10, 10, 15, 0.95) 0%, transparent 55%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(139, 92, 246, 0.07) 0 1px,
+      transparent 1px 72px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(34, 211, 238, 0.05) 0 1px,
+      transparent 1px 72px
+    );
+  background-position:
+    center,
+    calc(var(--grid-offset-x, 0px)) 0,
+    0 calc(var(--grid-offset-y, 0px));
+  mask-image: linear-gradient(to top, #000 15%, transparent 72%);
+  transition: transform 0.35s ease-out;
+}
+
+.bg-3d-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 55% 45% at var(--cursor-x, 50%) var(--cursor-y, 45%),
+      rgba(139, 92, 246, 0.14),
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 40% 30% at 20% 80%,
+      rgba(34, 211, 238, 0.06),
+      transparent 70%
+    );
+}
+
+main {
+  position: relative;
+  z-index: 1;
+}
+
 .cursor-spotlight {
   position: fixed;
   inset: 0;
@@ -1104,7 +1163,7 @@ body {
 .youtube-channels-strip {
   overflow: hidden;
   mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-  padding: 8px 0;
+  padding: 16px 0;
 }
 
 .youtube-channels-track {
@@ -1127,7 +1186,25 @@ body {
   border: 1px solid var(--border);
   border-radius: 999px;
   flex-shrink: 0;
-  transition: var(--transition);
+  position: relative;
+  text-decoration: none;
+  cursor: pointer;
+  transform-origin: center center;
+  transition:
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.youtube-channel-pill:hover {
+  transform: scale(1.14);
+  z-index: 10;
+  background: rgba(139, 92, 246, 0.12);
+  border-color: rgba(139, 92, 246, 0.55);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.35),
+    0 0 24px rgba(139, 92, 246, 0.25);
 }
 
 .youtube-channel-pill img {
@@ -1136,6 +1213,12 @@ body {
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid rgba(139, 92, 246, 0.4);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.25s ease;
+}
+
+.youtube-channel-pill:hover img {
+  transform: scale(1.1);
+  border-color: rgba(167, 139, 250, 0.9);
 }
 
 .youtube-channel-pill span {
