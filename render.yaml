@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: framecut
+    name: framecut-montage
     runtime: node
     rootDir: server
     buildCommand: npm install

@@ -3,7 +3,7 @@ const Auth = (() => {
   const API = (() => {
     const host = window.location.hostname;
     if (host === 'localhost' || host === '127.0.0.1') return '/api';
-    if (host.endsWith('.netlify.app')) return 'https://framecut.onrender.com/api';
+    if (host.endsWith('.netlify.app')) return 'https://framecut-montage.onrender.com/api';
     return '/api';
   })();
 
