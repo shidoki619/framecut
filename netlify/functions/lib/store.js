@@ -6,7 +6,14 @@ function emptyDb() {
 }
 
 async function blob() {
-  return getStore({ name: 'framecut-data', consistency: 'strong' });
+  const opts = { name: 'framecut-data', consistency: 'strong' };
+  const siteID = process.env.SITE_ID || process.env.NETLIFY_SITE_ID;
+  const token = process.env.NETLIFY_AUTH_TOKEN || process.env.NETLIFY_TOKEN;
+  if (siteID && token) {
+    opts.siteID = siteID;
+    opts.token = token;
+  }
+  return getStore(opts);
 }
 
 async function readDb() {
