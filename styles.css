@@ -1382,6 +1382,112 @@ main {
   opacity: 1;
 }
 
+.portfolio-tg-note {
+  margin-top: 36px;
+  padding: 28px 30px;
+  background: rgba(139, 92, 246, 0.08);
+  border: 1px solid rgba(139, 92, 246, 0.28);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.portfolio-tg-note-head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.portfolio-tg-note-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(34, 211, 238, 0.12);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  color: var(--cyan);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.portfolio-tg-note-head h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.portfolio-tg-note-head p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  max-width: 620px;
+}
+
+.portfolio-tg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.portfolio-tg-table th,
+.portfolio-tg-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.portfolio-tg-table th {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.portfolio-tg-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.portfolio-tg-table td:first-child {
+  color: var(--text);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.portfolio-tg-table td:last-child {
+  color: var(--text-muted);
+}
+
+.portfolio-tg-table a {
+  color: var(--cyan);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.portfolio-tg-table a:hover {
+  text-decoration: underline;
+}
+
+.portfolio-tg-btn {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 640px) {
+  .portfolio-tg-table th,
+  .portfolio-tg-table td {
+    padding: 10px 8px;
+    font-size: 0.82rem;
+  }
+
+  .portfolio-tg-table td:first-child {
+    white-space: normal;
+  }
+}
+
 @keyframes yt-channels-scroll {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
