@@ -213,3 +213,19 @@ document.querySelectorAll('.portfolio-item').forEach(item => {
     alert(`Просмотр: ${title}\n\nЗдесь можно встроить видео или открыть ссылку на YouTube/Vimeo.`);
   });
 });
+
+const portfolioMoreToggle = document.getElementById('portfolioMoreToggle');
+const portfolioMorePanel = document.getElementById('portfolioMorePanel');
+
+portfolioMoreToggle?.addEventListener('click', () => {
+  const isOpen = portfolioMoreToggle.getAttribute('aria-expanded') === 'true';
+  const nextOpen = !isOpen;
+
+  portfolioMoreToggle.setAttribute('aria-expanded', String(nextOpen));
+  portfolioMorePanel?.classList.toggle('is-open', nextOpen);
+
+  const label = portfolioMoreToggle.querySelector('.youtube-more-toggle-text');
+  if (label) {
+    label.textContent = nextOpen ? 'Скрыть дополнительные работы' : 'Показать ещё работы';
+  }
+});

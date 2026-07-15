@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260716">
+  <link rel="stylesheet" href="styles.css?v=20260717">
 </head>
 <body>
   <div class="noise"></div>
@@ -30,8 +30,8 @@
         FrameCut
       </a>
       <ul class="nav-links">
-        <li><a href="#services">Услуги</a></li>
         <li><a href="#portfolio">Портфолио</a></li>
+        <li><a href="#services">Услуги</a></li>
         <li><a href="#process">Процесс</a></li>
         <li><a href="#contact">Контакты</a></li>
       </ul>
@@ -44,8 +44,8 @@
       </button>
     </nav>
     <div class="mobile-menu">
-      <a href="#services">Услуги</a>
       <a href="#portfolio">Портфолио</a>
+      <a href="#services">Услуги</a>
       <a href="#process">Процесс</a>
       <a href="#contact">Контакты</a>
     </div>
@@ -273,76 +273,6 @@
       </div>
     </section>
 
-    <section id="services" class="section container">
-      <div class="section-header reveal">
-        <span class="section-tag">Услуги</span>
-        <h2>Что мы монтируем</h2>
-        <p>Подбираем стиль под задачу — от динамичных клипов до спокойных обзоров</p>
-      </div>
-      <div class="cards-grid">
-        <article class="card reveal">
-          <div class="card-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
-              <path d="M2 8h20M8 4v4M16 4v4" stroke="currentColor" stroke-width="1.5"/>
-            </svg>
-          </div>
-          <h3>YouTube &amp; подкасты</h3>
-          <p>Динамичная нарезка, титры, B-roll, заставки и удержание внимания зрителя.</p>
-          <ul class="card-tags">
-            <li>Jump cuts</li>
-            <li>Субтитры</li>
-            <li>Intro/Outro</li>
-          </ul>
-        </article>
-        <article class="card reveal">
-          <div class="card-icon card-icon-accent">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <rect x="5" y="2" width="14" height="20" rx="2" stroke="currentColor" stroke-width="1.5"/>
-              <circle cx="12" cy="18" r="1" fill="currentColor"/>
-            </svg>
-          </div>
-          <h3>Reels &amp; Shorts</h3>
-          <p>Вертикальный формат, трендовые переходы, ритм под музыку и хуки в первые 2 секунды.</p>
-          <ul class="card-tags">
-            <li>9:16</li>
-            <li>Тренды</li>
-            <li>Хуки</li>
-          </ul>
-        </article>
-        <article class="card reveal">
-          <div class="card-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="1.5"/>
-              <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.5"/>
-            </svg>
-          </div>
-          <h3>Реклама &amp; бренд</h3>
-          <p>Ролики для соцсетей и лендингов: чёткий месседж, графика, motion и цветокор.</p>
-          <ul class="card-tags">
-            <li>Motion</li>
-            <li>Цветокор</li>
-            <li>Брендинг</li>
-          </ul>
-        </article>
-        <article class="card reveal">
-          <div class="card-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
-              <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <h3>Свадьбы &amp; события</h3>
-          <p>Эмоциональный сторителлинг, музыкальная подборка и кинематографичная цветокоррекция.</p>
-          <ul class="card-tags">
-            <li>Storytelling</li>
-            <li>Музыка</li>
-            <li>Cinematic</li>
-          </ul>
-        </article>
-      </div>
-    </section>
-
     <section id="portfolio" class="section section-dark">
       <div class="container">
         <div class="section-header reveal">
@@ -466,8 +396,148 @@
                 </div>
               </article>
             </div>
+
+            <div class="youtube-more-wrap">
+              <button type="button" class="btn btn-ghost youtube-more-toggle" id="portfolioMoreToggle" aria-expanded="false" aria-controls="portfolioMorePanel">
+                <span class="youtube-more-toggle-text">Показать ещё работы</span>
+                <span class="youtube-more-toggle-icon" aria-hidden="true">▼</span>
+              </button>
+              <div class="youtube-more-panel" id="portfolioMorePanel">
+                <div class="youtube-works-grid">
+                  <article class="yt-work-card">
+                    <a class="yt-work-thumb" href="https://www.youtube.com/watch?v=gNnBwDhgg2s" target="_blank" rel="noopener noreferrer">
+                      <img src="https://i.ytimg.com/vi/gNnBwDhgg2s/hqdefault.jpg" alt="Превью видео ne Mark" loading="lazy">
+                      <span class="yt-work-play">▶</span>
+                    </a>
+                    <div class="yt-work-body">
+                      <div class="yt-work-author">
+                        <img src="assets/ne%20Mark.jpg" alt="ne Mark" loading="lazy">
+                        <span class="youtube-name-badge">ne Mark</span>
+                      </div>
+                      <h3>ПРОДАНО. КОНЕЦ GUCCI FAMQ?</h3>
+                      <p class="yt-work-edit">Драматичный RP-монтаж: нарастание напряжения, акценты на ключевых сценах, чистая склейка диалогов и сильный финальный ритм.</p>
+                    </div>
+                  </article>
+
+                  <article class="yt-work-card">
+                    <a class="yt-work-thumb" href="https://www.youtube.com/watch?v=BjBCSAgZ4KI" target="_blank" rel="noopener noreferrer">
+                      <img src="https://i.ytimg.com/vi/BjBCSAgZ4KI/hqdefault.jpg" alt="Превью видео ne Mark" loading="lazy">
+                      <span class="yt-work-play">▶</span>
+                    </a>
+                    <div class="yt-work-body">
+                      <div class="yt-work-author">
+                        <img src="assets/ne%20Mark.jpg" alt="ne Mark" loading="lazy">
+                        <span class="youtube-name-badge">ne Mark</span>
+                      </div>
+                      <h3>TANK — САМАЯ СЛАБАЯ СЕМЬЯ НА GTA 5 RP</h3>
+                      <p class="yt-work-edit">Сторителлинг через монтаж: темп подачи, юморные акценты, zoom на реакциях и удержание внимания от хука до конца.</p>
+                    </div>
+                  </article>
+
+                  <article class="yt-work-card">
+                    <a class="yt-work-thumb" href="https://www.youtube.com/watch?v=M9uBaxe4u1E" target="_blank" rel="noopener noreferrer">
+                      <img src="https://i.ytimg.com/vi/M9uBaxe4u1E/hqdefault.jpg" alt="Превью видео Mitsuki" loading="lazy">
+                      <span class="yt-work-play">▶</span>
+                    </a>
+                    <div class="yt-work-body">
+                      <div class="yt-work-author">
+                        <img src="assets/Mitsuki.jpg" alt="Mitsuki" loading="lazy">
+                        <span class="youtube-name-badge">Mitsuki</span>
+                      </div>
+                      <h3>ТУРНИР ПО ВОЙНЕ СЕМЕЙ ГЛАЗАМИ СЕМЬИ ALLEGRI в GTA 5 RP</h3>
+                      <p class="yt-work-edit">Турнирный формат: динамика боёв, структура по раундам, музыкальные акценты и читаемая подача хаоса войны семей.</p>
+                    </div>
+                  </article>
+
+                  <article class="yt-work-card">
+                    <a class="yt-work-thumb" href="https://www.youtube.com/watch?v=IlS4Q2gvBs4" target="_blank" rel="noopener noreferrer">
+                      <img src="https://i.ytimg.com/vi/IlS4Q2gvBs4/hqdefault.jpg" alt="Превью видео деку" loading="lazy">
+                      <span class="yt-work-play">▶</span>
+                    </a>
+                    <div class="yt-work-body">
+                      <div class="yt-work-author">
+                        <img src="assets/деку.jpg" alt="деку" loading="lazy">
+                        <span class="youtube-name-badge">деку</span>
+                      </div>
+                      <h3>КАЖДЫЙ КАПТ я МЕНЯЮ ПРИЦЕЛ в GTA 5 РП / MAJESTIC RP</h3>
+                      <p class="yt-work-edit"><strong>Только эдит в начале.</strong> Кастомное вступление: стильный opening edit, хук и визуальный ритм на старте ролика — дальше монтаж без моего участия.</p>
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section id="services" class="section container">
+      <div class="section-header reveal">
+        <span class="section-tag">Услуги</span>
+        <h2>Что мы монтируем</h2>
+        <p>Подбираем стиль под задачу — от динамичных клипов до спокойных обзоров</p>
+      </div>
+      <div class="cards-grid">
+        <article class="card reveal">
+          <div class="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M2 8h20M8 4v4M16 4v4" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <h3>YouTube &amp; подкасты</h3>
+          <p>Динамичная нарезка, титры, B-roll, заставки и удержание внимания зрителя.</p>
+          <ul class="card-tags">
+            <li>Jump cuts</li>
+            <li>Субтитры</li>
+            <li>Intro/Outro</li>
+          </ul>
+        </article>
+        <article class="card reveal">
+          <div class="card-icon card-icon-accent">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <rect x="5" y="2" width="14" height="20" rx="2" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="12" cy="18" r="1" fill="currentColor"/>
+            </svg>
+          </div>
+          <h3>Reels &amp; Shorts</h3>
+          <p>Вертикальный формат, трендовые переходы, ритм под музыку и хуки в первые 2 секунды.</p>
+          <ul class="card-tags">
+            <li>9:16</li>
+            <li>Тренды</li>
+            <li>Хуки</li>
+          </ul>
+        </article>
+        <article class="card reveal">
+          <div class="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <h3>Реклама &amp; бренд</h3>
+          <p>Ролики для соцсетей и лендингов: чёткий месседж, графика, motion и цветокор.</p>
+          <ul class="card-tags">
+            <li>Motion</li>
+            <li>Цветокор</li>
+            <li>Брендинг</li>
+          </ul>
+        </article>
+        <article class="card reveal">
+          <div class="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3>Свадьбы &amp; события</h3>
+          <p>Эмоциональный сторителлинг, музыкальная подборка и кинематографичная цветокоррекция.</p>
+          <ul class="card-tags">
+            <li>Storytelling</li>
+            <li>Музыка</li>
+            <li>Cinematic</li>
+          </ul>
+        </article>
       </div>
     </section>
 
