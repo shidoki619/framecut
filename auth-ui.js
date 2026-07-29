@@ -89,7 +89,37 @@ function renderNavAuth() {
   }
 }
 
+function setMobileMenuOpen(open) {
+  const mobileMenu = document.querySelector('.mobile-menu');
+  const burger = document.querySelector('.burger');
+  mobileMenu?.classList.toggle('open', open);
+  burger?.classList.toggle('active', open);
+  document.body.classList.toggle('menu-open', open);
+  if (burger) burger.setAttribute('aria-expanded', String(open));
+}
+
+function initMobileNav() {
+  const burger = document.querySelector('.burger');
+  const mobileMenu = document.querySelector('.mobile-menu');
+  if (!burger || !mobileMenu) return;
+
+  burger.addEventListener('click', () => {
+    setMobileMenuOpen(!mobileMenu.classList.contains('open'));
+  });
+
+  mobileMenu.addEventListener('click', e => {
+    if (e.target.closest('a')) setMobileMenuOpen(false);
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768 && mobileMenu.classList.contains('open')) {
+      setMobileMenuOpen(false);
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
+  initMobileNav();
   await Auth.init();
   renderNavAuth();
   if (typeof prefillContactForm === 'function') prefillContactForm();

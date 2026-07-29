@@ -1,24 +1,12 @@
 const header = document.querySelector('.header');
-const burger = document.querySelector('.burger');
-const mobileMenu = document.querySelector('.mobile-menu');
 const form = document.getElementById('contactForm');
 const formNote = document.getElementById('formNote');
 
 window.addEventListener('scroll', () => {
-  header.classList.toggle('scrolled', window.scrollY > 40);
+  header?.classList.toggle('scrolled', window.scrollY > 40);
 });
 
-burger?.addEventListener('click', () => {
-  mobileMenu.classList.toggle('open');
-  burger.classList.toggle('active');
-});
-
-mobileMenu?.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => {
-    mobileMenu.classList.remove('open');
-    burger.classList.remove('active');
-  });
-});
+/* Mobile nav is initialized in auth-ui.js */
 
 const revealElements = document.querySelectorAll('.reveal');
 const revealObserver = new IntersectionObserver(
