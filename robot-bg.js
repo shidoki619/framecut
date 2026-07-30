@@ -1,6 +1,6 @@
 /**
  * Scroll-driven 3D robot background (Three.js).
- * Camera orbit + robot pose react to page scroll.
+ * Full-body robot centered; cinematic camera shots blend with scroll.
  */
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -25,26 +25,24 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
+  renderer.toneMappingExposure = 1.08;
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x0a0a0f, 0.035);
+  scene.fog = new THREE.FogExp2(0x0a0a0f, 0.028);
 
-  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 80);
-  camera.position.set(0, 1.2, 5.2);
+  const camera = new THREE.PerspectiveCamera(isMobile ? 42 : 40, 1, 0.1, 80);
 
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
-  // Lights — purple / cyan brand palette
-  const hemi = new THREE.HemisphereLight(0xb8a4ff, 0x0a0a12, 0.75);
+  const hemi = new THREE.HemisphereLight(0xb8a4ff, 0x0a0a12, 0.8);
   scene.add(hemi);
 
-  const key = new THREE.DirectionalLight(0xffffff, 1.35);
+  const key = new THREE.DirectionalLight(0xffffff, 1.4);
   key.position.set(3.5, 6, 4);
   scene.add(key);
 
-  const fill = new THREE.DirectionalLight(0x22d3ee, 0.55);
+  const fill = new THREE.DirectionalLight(0x22d3ee, 0.6);
   fill.position.set(-4, 2, -2);
   scene.add(fill);
 
@@ -52,15 +50,14 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
   rim.position.set(0, 2.5, -3);
   scene.add(rim);
 
-  // Soft ground disc
   const ground = new THREE.Mesh(
-    new THREE.CircleGeometry(4.5, 64),
+    new THREE.CircleGeometry(5, 64),
     new THREE.MeshStandardMaterial({
       color: 0x12121a,
       metalness: 0.65,
       roughness: 0.35,
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.5,
     })
   );
   ground.rotation.x = -Math.PI / 2;
@@ -68,7 +65,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
   scene.add(ground);
 
   const ring = new THREE.Mesh(
-    new THREE.RingGeometry(1.6, 1.72, 64),
+    new THREE.RingGeometry(1.55, 1.7, 64),
     new THREE.MeshBasicMaterial({
       color: 0x8b5cf6,
       transparent: true,
@@ -80,14 +77,19 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
   ring.position.y = 0.01;
   scene.add(ring);
 
+  // Always centered in the scene
   const robotRoot = new THREE.Group();
-  robotRoot.position.set(isMobile ? 0 : 1.15, 0, 0);
+  robotRoot.position.set(0, 0, 0);
   scene.add(robotRoot);
+
+  // Look-at target ~ mid torso so full body stays framed
+  const LOOK_Y = 1.15;
 
   let mixer = null;
   let actions = {};
   let robot = null;
   let ready = false;
+  let robotHeight = 2.4;
 
   function buildFallbackRobot() {
     const g = new THREE.Group();
@@ -159,10 +161,12 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.y, size.z) || 1;
-    const scale = 2.35 / maxDim;
+    // Slightly larger so full body reads well in frame
+    const scale = 2.55 / maxDim;
     object.scale.setScalar(scale);
     object.position.sub(center.multiplyScalar(scale));
     object.position.y += (size.y * scale) / 2;
+    robotHeight = size.y * scale;
   }
 
   const MODEL_URLS = [
@@ -182,9 +186,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
           if (obj.isMesh) {
             obj.castShadow = false;
             obj.receiveShadow = false;
-            if (obj.material) {
-              obj.material.envMapIntensity = 0.9;
-            }
+            if (obj.material) obj.material.envMapIntensity = 0.9;
           }
         });
         fitRobot(robot);
@@ -195,7 +197,6 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
           gltf.animations.forEach(clip => {
             actions[clip.name] = mixer.clipAction(clip);
           });
-          // Idle / Wave / ThumbsUp if present
           const idle = actions.Idle || actions.Walking || Object.values(actions)[0];
           if (idle && !reduceMotion) {
             idle.reset().fadeIn(0.4).play();
@@ -214,17 +215,117 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
     console.warn('Robot model failed, using fallback:', lastError);
     robot = buildFallbackRobot();
     robotRoot.add(robot);
+    robotHeight = 2.5;
     ready = true;
     host.classList.add('is-ready');
   }
 
-  // Scroll / pointer state
+  /**
+   * Cinematic camera shots (scroll 0 → 1).
+   * pos: camera position, look: lookAt point, fov optional.
+   * Robot stays centered; shots keep full body in frame with margin.
+   */
+  function getShots() {
+    const d = isMobile ? 5.4 : 5.8; // distance for full body
+    const yMid = LOOK_Y;
+    return [
+      // 0 Hero — front full body
+      {
+        at: 0,
+        pos: new THREE.Vector3(0, yMid + 0.15, d),
+        look: new THREE.Vector3(0, yMid, 0),
+        fov: isMobile ? 42 : 40,
+        robotYaw: 0,
+      },
+      // 1 3/4 front-left
+      {
+        at: 0.14,
+        pos: new THREE.Vector3(-d * 0.72, yMid + 0.35, d * 0.78),
+        look: new THREE.Vector3(0, yMid + 0.05, 0),
+        fov: 38,
+        robotYaw: 0.25,
+      },
+      // 2 Low hero angle (looking up)
+      {
+        at: 0.28,
+        pos: new THREE.Vector3(d * 0.15, 0.35, d * 0.95),
+        look: new THREE.Vector3(0, yMid + 0.35, 0),
+        fov: 44,
+        robotYaw: -0.15,
+      },
+      // 3 Side profile
+      {
+        at: 0.42,
+        pos: new THREE.Vector3(d * 0.98, yMid, d * 0.12),
+        look: new THREE.Vector3(0, yMid, 0),
+        fov: 38,
+        robotYaw: 0,
+      },
+      // 4 High crane / top-down-ish
+      {
+        at: 0.56,
+        pos: new THREE.Vector3(d * 0.35, d * 0.85, d * 0.55),
+        look: new THREE.Vector3(0, yMid * 0.55, 0),
+        fov: 36,
+        robotYaw: 0.4,
+      },
+      // 5 Back 3/4
+      {
+        at: 0.7,
+        pos: new THREE.Vector3(-d * 0.55, yMid + 0.25, -d * 0.85),
+        look: new THREE.Vector3(0, yMid, 0),
+        fov: 40,
+        robotYaw: Math.PI * 0.15,
+      },
+      // 6 Dramatic orbit opposite
+      {
+        at: 0.84,
+        pos: new THREE.Vector3(d * 0.8, yMid + 0.5, -d * 0.55),
+        look: new THREE.Vector3(0, yMid + 0.1, 0),
+        fov: 37,
+        robotYaw: -0.35,
+      },
+      // 7 Final front slightly closer
+      {
+        at: 1,
+        pos: new THREE.Vector3(0.1, yMid + 0.2, d * 0.92),
+        look: new THREE.Vector3(0, yMid, 0),
+        fov: 39,
+        robotYaw: 0,
+      },
+    ];
+  }
+
+  function smoothstep(t) {
+    return t * t * (3 - 2 * t);
+  }
+
+  function sampleCamera(t) {
+    const shots = getShots();
+    const clamped = Math.min(1, Math.max(0, t));
+    let i = 0;
+    while (i < shots.length - 1 && clamped > shots[i + 1].at) i += 1;
+    const a = shots[i];
+    const b = shots[Math.min(i + 1, shots.length - 1)];
+    const span = Math.max(1e-6, b.at - a.at);
+    const u = smoothstep((clamped - a.at) / span);
+
+    const pos = a.pos.clone().lerp(b.pos, u);
+    const look = a.look.clone().lerp(b.look, u);
+    const fov = THREE.MathUtils.lerp(a.fov, b.fov, u);
+    const robotYaw = THREE.MathUtils.lerp(a.robotYaw, b.robotYaw, u);
+    return { pos, look, fov, robotYaw };
+  }
+
   let scrollTarget = 0;
   let scrollSmooth = 0;
   let pointerX = 0;
   let pointerY = 0;
   let pointerSmoothX = 0;
   let pointerSmoothY = 0;
+
+  const camPos = new THREE.Vector3();
+  const camLook = new THREE.Vector3();
 
   function readScroll() {
     const doc = document.documentElement;
@@ -254,39 +355,51 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
     raf = requestAnimationFrame(frame);
     const dt = Math.min(0.05, clock.getDelta());
 
-    scrollSmooth += (scrollTarget - scrollSmooth) * (reduceMotion ? 1 : 0.06);
-    pointerSmoothX += (pointerX - pointerSmoothX) * 0.04;
-    pointerSmoothY += (pointerY - pointerSmoothY) * 0.04;
+    scrollSmooth += (scrollTarget - scrollSmooth) * (reduceMotion ? 1 : 0.055);
+    pointerSmoothX += (pointerX - pointerSmoothX) * 0.045;
+    pointerSmoothY += (pointerY - pointerSmoothY) * 0.045;
 
-    const t = scrollSmooth;
-    // Orbit camera around robot as user scrolls
-    const az = -0.55 + t * Math.PI * 1.35 + pointerSmoothX * 0.35;
-    const el = 0.22 + Math.sin(t * Math.PI) * 0.28 - pointerSmoothY * 0.12;
-    const radius = isMobile ? 4.6 : 5.1;
+    const shot = sampleCamera(scrollSmooth);
 
-    const cx = Math.sin(az) * Math.cos(el) * radius + (isMobile ? 0 : 0.7);
-    const cy = 1.05 + Math.sin(el) * radius * 0.55 + t * 0.35;
-    const cz = Math.cos(az) * Math.cos(el) * radius;
+    // Subtle pointer parallax — keep robot fully visible (small offsets)
+    const parallax = isMobile ? 0.12 : 0.22;
+    camPos.copy(shot.pos);
+    camPos.x += pointerSmoothX * parallax;
+    camPos.y += -pointerSmoothY * parallax * 0.35;
 
-    camera.position.set(cx, cy, cz);
-    camera.lookAt(isMobile ? 0 : 0.9, 1.1 + t * 0.15, 0);
+    camLook.copy(shot.look);
+    camLook.x += pointerSmoothX * 0.06;
+    camLook.y += -pointerSmoothY * 0.04;
+
+    camera.position.copy(camPos);
+    camera.lookAt(camLook);
+    if (Math.abs(camera.fov - shot.fov) > 0.05) {
+      camera.fov = shot.fov;
+      camera.updateProjectionMatrix();
+    }
 
     if (robotRoot) {
-      robotRoot.rotation.y = t * Math.PI * 0.85 + pointerSmoothX * 0.2;
-      robotRoot.position.y = Math.sin(clock.elapsedTime * 0.8) * 0.04;
-      robotRoot.rotation.z = pointerSmoothX * 0.04;
+      const floatY = Math.sin(clock.elapsedTime * 0.75) * 0.035;
+      robotRoot.position.set(0, floatY, 0);
+      robotRoot.rotation.y = shot.robotYaw + pointerSmoothX * 0.12;
+      robotRoot.rotation.z = pointerSmoothX * 0.03;
+      robotRoot.rotation.x = -pointerSmoothY * 0.025;
     }
 
     if (ring) {
-      ring.rotation.z = clock.elapsedTime * 0.25;
+      ring.rotation.z = clock.elapsedTime * 0.22;
       ring.material.opacity = 0.22 + Math.sin(clock.elapsedTime) * 0.08;
     }
 
     if (mixer && !reduceMotion) mixer.update(dt);
 
-    // Subtle light drift with scroll
-    rim.intensity = 14 + t * 10;
-    fill.intensity = 0.4 + t * 0.35;
+    rim.intensity = 14 + scrollSmooth * 12;
+    fill.intensity = 0.45 + scrollSmooth * 0.4;
+    key.position.set(
+      3.5 + Math.sin(scrollSmooth * Math.PI * 2) * 1.2,
+      6,
+      4 + Math.cos(scrollSmooth * Math.PI * 2) * 0.8
+    );
 
     renderer.render(scene, camera);
   }
@@ -299,15 +412,18 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
   readScroll();
   loadRobot().then(() => {
     if (reduceMotion) {
-      // One static frame
       scrollSmooth = scrollTarget;
+      const shot = sampleCamera(scrollSmooth);
+      camera.position.copy(shot.pos);
+      camera.lookAt(shot.look);
+      camera.fov = shot.fov;
+      camera.updateProjectionMatrix();
       renderer.render(scene, camera);
       return;
     }
     frame();
   });
 
-  // Pause when tab hidden
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       cancelAnimationFrame(raf);
