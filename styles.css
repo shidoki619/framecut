@@ -98,19 +98,83 @@ svg {
 .robot-bg-fade {
   position: absolute;
   inset: 0;
+  /* Glow near robot (right) — no dark cover on him */
   background:
-    radial-gradient(ellipse 55% 50% at 50% 48%, rgba(139, 92, 246, 0.14), transparent 65%),
-    radial-gradient(ellipse 40% 35% at 50% 70%, rgba(34, 211, 238, 0.07), transparent 70%),
-    linear-gradient(180deg, rgba(10, 10, 15, 0.12) 0%, rgba(10, 10, 15, 0.5) 100%);
+    radial-gradient(ellipse 48% 55% at 78% 50%, rgba(139, 92, 246, 0.18), transparent 68%),
+    radial-gradient(ellipse 35% 40% at 72% 62%, rgba(34, 211, 238, 0.08), transparent 70%);
+  pointer-events: none;
 }
 
 .robot-bg-vignette {
   position: absolute;
   inset: 0;
-  /* Center stays clear so full robot is visible */
+  /* Darken only LEFT (content). RIGHT (robot) stays clear */
   background:
-    radial-gradient(ellipse 58% 70% at 50% 48%, transparent 0%, transparent 42%, rgba(10, 10, 15, 0.45) 100%),
-    linear-gradient(180deg, rgba(10, 10, 15, 0.4) 0%, transparent 22%, transparent 78%, rgba(10, 10, 15, 0.7) 100%);
+    linear-gradient(
+      90deg,
+      rgba(10, 10, 15, 0.82) 0%,
+      rgba(10, 10, 15, 0.55) 28%,
+      rgba(10, 10, 15, 0.12) 48%,
+      transparent 58%,
+      transparent 100%
+    ),
+    linear-gradient(180deg, rgba(10, 10, 15, 0.35) 0%, transparent 18%, transparent 82%, rgba(10, 10, 15, 0.55) 100%);
+  pointer-events: none;
+}
+
+/* Content left, robot right */
+@media (min-width: 900px) {
+  body.has-robot-bg .hero {
+    grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+    align-items: center;
+  }
+
+  body.has-robot-bg .hero-content {
+    max-width: 540px;
+    text-align: left;
+  }
+
+  body.has-robot-bg .hero-desc {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  body.has-robot-bg .hero-actions,
+  body.has-robot-bg .hero-stats {
+    justify-content: flex-start;
+  }
+
+  /* Free the right column for the robot — hide Premiere mock */
+  body.has-robot-bg .hero-visual {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    min-height: 420px;
+  }
+
+  body.has-robot-bg .section-header {
+    text-align: left;
+    margin-left: 0;
+    margin-right: auto;
+    max-width: 520px;
+  }
+
+  body.has-robot-bg .cards-grid,
+  body.has-robot-bg .process-steps,
+  body.has-robot-bg .tools-bar,
+  body.has-robot-bg .pricing-contact-grid,
+  body.has-robot-bg .youtube-works {
+    max-width: min(640px, 52vw);
+  }
+
+  body.has-robot-bg .portfolio-tg-note {
+    max-width: min(640px, 52vw);
+  }
+
+  body.has-robot-bg .footer-inner {
+    max-width: min(640px, 52vw);
+    margin-left: 0;
+  }
 }
 
 /* legacy grid bg (other pages / fallback) */
@@ -2433,9 +2497,21 @@ body.menu-open {
   }
 
   .robot-bg-vignette {
+    /* Mobile: robot lower/center — lighten middle, keep text readable */
     background:
-      radial-gradient(ellipse 70% 65% at 50% 48%, transparent 0%, transparent 48%, rgba(10, 10, 15, 0.55) 100%),
-      linear-gradient(180deg, rgba(10, 10, 15, 0.42) 0%, transparent 20%, transparent 75%, rgba(10, 10, 15, 0.78) 100%);
+      linear-gradient(180deg, rgba(10, 10, 15, 0.55) 0%, rgba(10, 10, 15, 0.25) 35%, rgba(10, 10, 15, 0.2) 55%, rgba(10, 10, 15, 0.75) 100%);
+  }
+
+  body.has-robot-bg .hero-visual {
+    display: none;
+  }
+
+  body.has-robot-bg .cards-grid,
+  body.has-robot-bg .process-steps,
+  body.has-robot-bg .tools-bar,
+  body.has-robot-bg .pricing-contact-grid,
+  body.has-robot-bg .youtube-works {
+    max-width: 100%;
   }
 
   .orb-1,

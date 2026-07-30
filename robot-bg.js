@@ -1,322 +1,251 @@
 /**
- * Scroll-driven 3D robot background (Three.js).
- * Full-body robot centered; cinematic camera shots blend with scroll.
+ * Cartoon 3D robot — right side of screen, face always visible,
+ * dark smooth body, head tracks cursor. Content lives on the left.
  */
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 (() => {
   const host = document.getElementById('robotBg');
   const canvas = document.getElementById('robotCanvas');
   if (!host || !canvas) return;
 
+  document.body.classList.add('has-robot-bg');
+
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isMobile = window.matchMedia('(max-width: 768px)').matches
+  const isMobile = () => window.matchMedia('(max-width: 768px)').matches
     || window.matchMedia('(pointer: coarse)').matches;
 
   const renderer = new THREE.WebGLRenderer({
     canvas,
-    antialias: !isMobile,
+    antialias: true,
     alpha: true,
     powerPreference: 'high-performance',
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile() ? 1.75 : 2));
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.08;
+  renderer.toneMappingExposure = 1.12;
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x0a0a0f, 0.028);
 
-  const camera = new THREE.PerspectiveCamera(isMobile ? 42 : 40, 1, 0.1, 80);
+  const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 60);
 
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  // Soft cartoon lighting
+  scene.add(new THREE.HemisphereLight(0xc4b5fd, 0x1a1a24, 0.95));
 
-  const hemi = new THREE.HemisphereLight(0xb8a4ff, 0x0a0a12, 0.8);
-  scene.add(hemi);
-
-  const key = new THREE.DirectionalLight(0xffffff, 1.4);
-  key.position.set(3.5, 6, 4);
+  const key = new THREE.DirectionalLight(0xffffff, 1.15);
+  key.position.set(2.5, 5, 4);
   scene.add(key);
 
-  const fill = new THREE.DirectionalLight(0x22d3ee, 0.6);
-  fill.position.set(-4, 2, -2);
+  const fill = new THREE.DirectionalLight(0x67e8f9, 0.45);
+  fill.position.set(-3, 2, 2);
   scene.add(fill);
 
-  const rim = new THREE.PointLight(0x8b5cf6, 18, 18, 2);
-  rim.position.set(0, 2.5, -3);
+  const rim = new THREE.PointLight(0xa78bfa, 12, 14, 2);
+  rim.position.set(1.5, 2.2, -2.5);
   scene.add(rim);
 
+  // Materials — dark, smooth, toon
+  const bodyMat = new THREE.MeshToonMaterial({ color: 0x1a1a22 });
+  const bodyDarkMat = new THREE.MeshToonMaterial({ color: 0x121218 });
+  const jointMat = new THREE.MeshToonMaterial({ color: 0x2a2a36 });
+  const accentMat = new THREE.MeshToonMaterial({
+    color: 0x6d28d9,
+    emissive: 0x4c1d95,
+    emissiveIntensity: 0.25,
+  });
+  const faceMat = new THREE.MeshToonMaterial({ color: 0x252530 });
+  const eyeMat = new THREE.MeshToonMaterial({
+    color: 0x22d3ee,
+    emissive: 0x0891b2,
+    emissiveIntensity: 0.85,
+  });
+  const cheekMat = new THREE.MeshToonMaterial({
+    color: 0xf472b6,
+    emissive: 0xbe185d,
+    emissiveIntensity: 0.2,
+  });
+  const outlineMat = new THREE.MeshBasicMaterial({
+    color: 0x0a0a0f,
+    side: THREE.BackSide,
+  });
+
+  function toonMesh(geo, mat, outlineScale = 1.055) {
+    const mesh = new THREE.Mesh(geo, mat);
+    const outline = new THREE.Mesh(geo, outlineMat);
+    outline.scale.setScalar(outlineScale);
+    outline.renderOrder = -1;
+    mesh.add(outline);
+    return mesh;
+  }
+
+  /** Build a smooth cartoon robot with separate head for look-at */
+  function buildCartoonRobot() {
+    const root = new THREE.Group();
+
+    // Legs
+    const legGeo = new THREE.CapsuleGeometry(0.18, 0.55, 6, 12);
+    const footGeo = new THREE.CapsuleGeometry(0.16, 0.12, 4, 10);
+    [-1, 1].forEach(side => {
+      const leg = toonMesh(legGeo, bodyDarkMat, 1.06);
+      leg.position.set(side * 0.28, 0.48, 0);
+      root.add(leg);
+      const foot = toonMesh(footGeo, jointMat, 1.07);
+      foot.rotation.x = Math.PI / 2;
+      foot.position.set(side * 0.28, 0.1, 0.12);
+      root.add(foot);
+    });
+
+    // Torso — rounded dark body
+    const torso = toonMesh(new THREE.CapsuleGeometry(0.52, 0.55, 8, 16), bodyMat, 1.05);
+    torso.position.y = 1.25;
+    root.add(torso);
+
+    // Belly panel
+    const panel = toonMesh(new THREE.SphereGeometry(0.28, 20, 16), jointMat, 1.04);
+    panel.scale.set(1, 0.85, 0.35);
+    panel.position.set(0, 1.15, 0.38);
+    root.add(panel);
+
+    // Chest accent
+    const chest = toonMesh(new THREE.SphereGeometry(0.16, 16, 12), accentMat, 1.08);
+    chest.scale.set(1.4, 0.7, 0.4);
+    chest.position.set(0, 1.42, 0.42);
+    root.add(chest);
+
+    // Arms
+    const armGeo = new THREE.CapsuleGeometry(0.13, 0.5, 6, 12);
+    const handGeo = new THREE.SphereGeometry(0.15, 14, 12);
+    [-1, 1].forEach(side => {
+      const shoulder = toonMesh(new THREE.SphereGeometry(0.16, 12, 10), jointMat, 1.08);
+      shoulder.position.set(side * 0.62, 1.55, 0);
+      root.add(shoulder);
+
+      const arm = toonMesh(armGeo, bodyDarkMat, 1.06);
+      arm.position.set(side * 0.72, 1.15, 0.05);
+      arm.rotation.z = side * 0.18;
+      root.add(arm);
+
+      const hand = toonMesh(handGeo, jointMat, 1.07);
+      hand.position.set(side * 0.78, 0.78, 0.08);
+      root.add(hand);
+    });
+
+    // Neck
+    const neck = toonMesh(new THREE.CapsuleGeometry(0.12, 0.12, 4, 10), jointMat, 1.08);
+    neck.position.y = 1.82;
+    root.add(neck);
+
+    // —— Head (tracks cursor) ——
+    const head = new THREE.Group();
+    head.position.set(0, 2.12, 0);
+    root.add(head);
+
+    const skull = toonMesh(new THREE.SphereGeometry(0.42, 28, 22), bodyMat, 1.05);
+    skull.scale.set(1.05, 1, 0.95);
+    head.add(skull);
+
+    // Face plate — always the “front”
+    const face = toonMesh(new THREE.SphereGeometry(0.34, 24, 18), faceMat, 1.03);
+    face.scale.set(0.95, 0.9, 0.45);
+    face.position.set(0, -0.02, 0.28);
+    head.add(face);
+
+    // Eyes
+    const eyeGeo = new THREE.SphereGeometry(0.09, 16, 12);
+    const leftEye = toonMesh(eyeGeo, eyeMat, 1.12);
+    leftEye.position.set(-0.14, 0.04, 0.4);
+    leftEye.scale.set(1, 1.15, 0.6);
+    head.add(leftEye);
+
+    const rightEye = toonMesh(eyeGeo, eyeMat, 1.12);
+    rightEye.position.set(0.14, 0.04, 0.4);
+    rightEye.scale.set(1, 1.15, 0.6);
+    head.add(rightEye);
+
+    // Pupils (small dark)
+    const pupilMat = new THREE.MeshToonMaterial({ color: 0x0a0a12 });
+    [-0.14, 0.14].forEach(x => {
+      const p = new THREE.Mesh(new THREE.SphereGeometry(0.04, 10, 8), pupilMat);
+      p.position.set(x, 0.04, 0.46);
+      head.add(p);
+    });
+
+    // Smile
+    const smile = toonMesh(
+      new THREE.TorusGeometry(0.12, 0.025, 8, 16, Math.PI),
+      accentMat,
+      1.15
+    );
+    smile.position.set(0, -0.14, 0.4);
+    smile.rotation.x = Math.PI;
+    smile.rotation.z = Math.PI;
+    head.add(smile);
+
+    // Cheeks
+    [-1, 1].forEach(side => {
+      const cheek = toonMesh(new THREE.SphereGeometry(0.055, 10, 8), cheekMat, 1.1);
+      cheek.position.set(side * 0.28, -0.06, 0.36);
+      head.add(cheek);
+    });
+
+    // Antenna
+    const ant = toonMesh(new THREE.CapsuleGeometry(0.03, 0.22, 4, 8), jointMat, 1.15);
+    ant.position.set(0.12, 0.48, 0);
+    head.add(ant);
+    const bulb = toonMesh(new THREE.SphereGeometry(0.08, 12, 10), eyeMat, 1.15);
+    bulb.position.set(0.12, 0.64, 0);
+    head.add(bulb);
+
+    // Ears / headphones
+    [-1, 1].forEach(side => {
+      const ear = toonMesh(new THREE.SphereGeometry(0.14, 12, 10), accentMat, 1.1);
+      ear.scale.set(0.55, 0.9, 0.7);
+      ear.position.set(side * 0.44, 0.05, 0);
+      head.add(ear);
+    });
+
+    root.userData.head = head;
+    root.userData.leftEye = leftEye;
+    root.userData.rightEye = rightEye;
+    return root;
+  }
+
+  const robotRoot = new THREE.Group();
+  scene.add(robotRoot);
+
+  const robot = buildCartoonRobot();
+  robotRoot.add(robot);
+  const head = robot.userData.head;
+
+  // Soft ground under robot
   const ground = new THREE.Mesh(
-    new THREE.CircleGeometry(5, 64),
-    new THREE.MeshStandardMaterial({
-      color: 0x12121a,
-      metalness: 0.65,
-      roughness: 0.35,
+    new THREE.CircleGeometry(2.2, 48),
+    new THREE.MeshToonMaterial({
+      color: 0x14141c,
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.55,
     })
   );
   ground.rotation.x = -Math.PI / 2;
-  ground.position.y = -0.02;
-  scene.add(ground);
+  ground.position.y = 0;
+  robotRoot.add(ground);
 
   const ring = new THREE.Mesh(
-    new THREE.RingGeometry(1.55, 1.7, 64),
+    new THREE.RingGeometry(1.35, 1.48, 48),
     new THREE.MeshBasicMaterial({
-      color: 0x8b5cf6,
+      color: 0x7c3aed,
       transparent: true,
-      opacity: 0.35,
+      opacity: 0.4,
       side: THREE.DoubleSide,
     })
   );
   ring.rotation.x = -Math.PI / 2;
-  ring.position.y = 0.01;
-  scene.add(ring);
+  ring.position.y = 0.02;
+  robotRoot.add(ring);
 
-  // Always centered in the scene
-  const robotRoot = new THREE.Group();
-  robotRoot.position.set(0, 0, 0);
-  scene.add(robotRoot);
-
-  // Look-at target ~ mid torso so full body stays framed
-  const LOOK_Y = 1.15;
-
-  let mixer = null;
-  let actions = {};
-  let robot = null;
-  let ready = false;
-  let robotHeight = 2.4;
-
-  function buildFallbackRobot() {
-    const g = new THREE.Group();
-    const metal = new THREE.MeshStandardMaterial({
-      color: 0x2a2a35,
-      metalness: 0.85,
-      roughness: 0.28,
-    });
-    const accent = new THREE.MeshStandardMaterial({
-      color: 0x8b5cf6,
-      metalness: 0.6,
-      roughness: 0.25,
-      emissive: 0x4c1d95,
-      emissiveIntensity: 0.35,
-    });
-    const cyan = new THREE.MeshStandardMaterial({
-      color: 0x22d3ee,
-      metalness: 0.5,
-      roughness: 0.2,
-      emissive: 0x0e7490,
-      emissiveIntensity: 0.4,
-    });
-
-    const body = new THREE.Mesh(new THREE.BoxGeometry(0.9, 1.15, 0.55), metal);
-    body.position.y = 1.15;
-    g.add(body);
-
-    const chest = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.35, 0.12), accent);
-    chest.position.set(0, 1.25, 0.28);
-    g.add(chest);
-
-    const head = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.5, 0.5), metal);
-    head.position.y = 1.95;
-    g.add(head);
-
-    const visor = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.12, 0.08), cyan);
-    visor.position.set(0, 1.98, 0.26);
-    g.add(visor);
-
-    const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.35, 8), accent);
-    antenna.position.set(0.18, 2.35, 0);
-    g.add(antenna);
-    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 12), cyan);
-    bulb.position.set(0.18, 2.55, 0);
-    g.add(bulb);
-
-    [-1, 1].forEach(side => {
-      const arm = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.85, 0.22), metal);
-      arm.position.set(side * 0.65, 1.15, 0);
-      g.add(arm);
-      const hand = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 12), accent);
-      hand.position.set(side * 0.65, 0.68, 0);
-      g.add(hand);
-
-      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.9, 0.28), metal);
-      leg.position.set(side * 0.28, 0.45, 0);
-      g.add(leg);
-      const foot = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.12, 0.42), accent);
-      foot.position.set(side * 0.28, 0.06, 0.05);
-      g.add(foot);
-    });
-
-    g.scale.setScalar(1.05);
-    return g;
-  }
-
-  function fitRobot(object) {
-    const box = new THREE.Box3().setFromObject(object);
-    const size = box.getSize(new THREE.Vector3());
-    const center = box.getCenter(new THREE.Vector3());
-    const maxDim = Math.max(size.x, size.y, size.z) || 1;
-    // Slightly larger so full body reads well in frame
-    const scale = 2.55 / maxDim;
-    object.scale.setScalar(scale);
-    object.position.sub(center.multiplyScalar(scale));
-    object.position.y += (size.y * scale) / 2;
-    robotHeight = size.y * scale;
-  }
-
-  const MODEL_URLS = [
-    'https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb',
-    'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r170/examples/models/gltf/RobotExpressive/RobotExpressive.glb',
-  ];
-
-  async function loadRobot() {
-    const loader = new GLTFLoader();
-    let lastError = null;
-
-    for (const url of MODEL_URLS) {
-      try {
-        const gltf = await loader.loadAsync(url);
-        robot = gltf.scene;
-        robot.traverse(obj => {
-          if (obj.isMesh) {
-            obj.castShadow = false;
-            obj.receiveShadow = false;
-            if (obj.material) obj.material.envMapIntensity = 0.9;
-          }
-        });
-        fitRobot(robot);
-        robotRoot.add(robot);
-
-        if (gltf.animations?.length) {
-          mixer = new THREE.AnimationMixer(robot);
-          gltf.animations.forEach(clip => {
-            actions[clip.name] = mixer.clipAction(clip);
-          });
-          const idle = actions.Idle || actions.Walking || Object.values(actions)[0];
-          if (idle && !reduceMotion) {
-            idle.reset().fadeIn(0.4).play();
-            idle.setEffectiveTimeScale(0.55);
-          }
-        }
-
-        ready = true;
-        host.classList.add('is-ready');
-        return;
-      } catch (err) {
-        lastError = err;
-      }
-    }
-
-    console.warn('Robot model failed, using fallback:', lastError);
-    robot = buildFallbackRobot();
-    robotRoot.add(robot);
-    robotHeight = 2.5;
-    ready = true;
-    host.classList.add('is-ready');
-  }
-
-  /**
-   * Cinematic camera shots (scroll 0 → 1).
-   * pos: camera position, look: lookAt point, fov optional.
-   * Robot stays centered; shots keep full body in frame with margin.
-   */
-  function getShots() {
-    const d = isMobile ? 5.4 : 5.8; // distance for full body
-    const yMid = LOOK_Y;
-    return [
-      // 0 Hero — front full body
-      {
-        at: 0,
-        pos: new THREE.Vector3(0, yMid + 0.15, d),
-        look: new THREE.Vector3(0, yMid, 0),
-        fov: isMobile ? 42 : 40,
-        robotYaw: 0,
-      },
-      // 1 3/4 front-left
-      {
-        at: 0.14,
-        pos: new THREE.Vector3(-d * 0.72, yMid + 0.35, d * 0.78),
-        look: new THREE.Vector3(0, yMid + 0.05, 0),
-        fov: 38,
-        robotYaw: 0.25,
-      },
-      // 2 Low hero angle (looking up)
-      {
-        at: 0.28,
-        pos: new THREE.Vector3(d * 0.15, 0.35, d * 0.95),
-        look: new THREE.Vector3(0, yMid + 0.35, 0),
-        fov: 44,
-        robotYaw: -0.15,
-      },
-      // 3 Side profile
-      {
-        at: 0.42,
-        pos: new THREE.Vector3(d * 0.98, yMid, d * 0.12),
-        look: new THREE.Vector3(0, yMid, 0),
-        fov: 38,
-        robotYaw: 0,
-      },
-      // 4 High crane / top-down-ish
-      {
-        at: 0.56,
-        pos: new THREE.Vector3(d * 0.35, d * 0.85, d * 0.55),
-        look: new THREE.Vector3(0, yMid * 0.55, 0),
-        fov: 36,
-        robotYaw: 0.4,
-      },
-      // 5 Back 3/4
-      {
-        at: 0.7,
-        pos: new THREE.Vector3(-d * 0.55, yMid + 0.25, -d * 0.85),
-        look: new THREE.Vector3(0, yMid, 0),
-        fov: 40,
-        robotYaw: Math.PI * 0.15,
-      },
-      // 6 Dramatic orbit opposite
-      {
-        at: 0.84,
-        pos: new THREE.Vector3(d * 0.8, yMid + 0.5, -d * 0.55),
-        look: new THREE.Vector3(0, yMid + 0.1, 0),
-        fov: 37,
-        robotYaw: -0.35,
-      },
-      // 7 Final front slightly closer
-      {
-        at: 1,
-        pos: new THREE.Vector3(0.1, yMid + 0.2, d * 0.92),
-        look: new THREE.Vector3(0, yMid, 0),
-        fov: 39,
-        robotYaw: 0,
-      },
-    ];
-  }
-
-  function smoothstep(t) {
-    return t * t * (3 - 2 * t);
-  }
-
-  function sampleCamera(t) {
-    const shots = getShots();
-    const clamped = Math.min(1, Math.max(0, t));
-    let i = 0;
-    while (i < shots.length - 1 && clamped > shots[i + 1].at) i += 1;
-    const a = shots[i];
-    const b = shots[Math.min(i + 1, shots.length - 1)];
-    const span = Math.max(1e-6, b.at - a.at);
-    const u = smoothstep((clamped - a.at) / span);
-
-    const pos = a.pos.clone().lerp(b.pos, u);
-    const look = a.look.clone().lerp(b.look, u);
-    const fov = THREE.MathUtils.lerp(a.fov, b.fov, u);
-    const robotYaw = THREE.MathUtils.lerp(a.robotYaw, b.robotYaw, u);
-    return { pos, look, fov, robotYaw };
-  }
-
+  // Pointer + scroll
   let scrollTarget = 0;
   let scrollSmooth = 0;
   let pointerX = 0;
@@ -324,8 +253,11 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
   let pointerSmoothX = 0;
   let pointerSmoothY = 0;
 
-  const camPos = new THREE.Vector3();
-  const camLook = new THREE.Vector3();
+  const lookTarget = new THREE.Vector3();
+  const headWorld = new THREE.Vector3();
+  const desiredHeadQuat = new THREE.Quaternion();
+  const baseHeadQuat = new THREE.Quaternion();
+  head.getWorldQuaternion(baseHeadQuat);
 
   function readScroll() {
     const doc = document.documentElement;
@@ -340,12 +272,76 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
     pointerY = (y / window.innerHeight) * 2 - 1;
   }
 
+  function placeRobotAndCamera() {
+    const mobile = isMobile();
+    // Robot on the RIGHT (desktop), centered on mobile
+    robotRoot.position.set(mobile ? 0 : 1.55, 0, 0);
+    robotRoot.scale.setScalar(mobile ? 0.95 : 1.08);
+    // Face camera (user) — slight turn toward center/content
+    robotRoot.rotation.set(0, mobile ? 0 : -0.22, 0);
+
+    // Camera: full body + face always in view, looking from front-left of robot
+    if (mobile) {
+      camera.position.set(0, 1.35, 5.6);
+      camera.lookAt(0, 1.2, 0);
+      camera.fov = 40;
+    } else {
+      camera.position.set(-0.15, 1.4, 5.5);
+      camera.lookAt(1.55, 1.25, 0);
+      camera.fov = 36;
+    }
+    camera.updateProjectionMatrix();
+  }
+
   function resize() {
     const w = host.clientWidth || window.innerWidth;
     const h = host.clientHeight || window.innerHeight;
     camera.aspect = w / h;
-    camera.updateProjectionMatrix();
     renderer.setSize(w, h, false);
+    placeRobotAndCamera();
+  }
+
+  function updateHeadLook() {
+    if (!head) return;
+
+    head.getWorldPosition(headWorld);
+
+    // Point in front of head toward cursor (screen → world-ish)
+    const reach = 2.8;
+    lookTarget.set(
+      headWorld.x + pointerSmoothX * reach * 1.1,
+      headWorld.y - pointerSmoothY * reach * 0.75 + 0.1,
+      headWorld.z + reach * 0.95
+    );
+
+    // Build look orientation without rolling
+    const tmp = new THREE.Object3D();
+    tmp.position.copy(headWorld);
+    tmp.lookAt(lookTarget);
+
+    desiredHeadQuat.copy(tmp.quaternion);
+
+    // Limit how far head turns (keeps face mostly toward camera)
+    const e = new THREE.Euler().setFromQuaternion(desiredHeadQuat, 'YXZ');
+    e.x = THREE.MathUtils.clamp(e.x, -0.45, 0.4);
+    e.y = THREE.MathUtils.clamp(e.y, -0.75, 0.75);
+    e.z = 0;
+    desiredHeadQuat.setFromEuler(e);
+
+    // Smooth blend into local head rotation (parent already rotated)
+    // Convert world desired to local relative to robotRoot
+    const parentQ = new THREE.Quaternion();
+    robotRoot.getWorldQuaternion(parentQ);
+    const localQ = parentQ.clone().invert().multiply(desiredHeadQuat);
+
+    const le = new THREE.Euler().setFromQuaternion(localQ, 'YXZ');
+    le.x = THREE.MathUtils.clamp(le.x, -0.4, 0.35);
+    le.y = THREE.MathUtils.clamp(le.y, -0.65, 0.65);
+    le.z = THREE.MathUtils.clamp(le.z * 0.15, -0.08, 0.08);
+
+    head.rotation.x = THREE.MathUtils.lerp(head.rotation.x, le.x, 0.12);
+    head.rotation.y = THREE.MathUtils.lerp(head.rotation.y, le.y, 0.12);
+    head.rotation.z = THREE.MathUtils.lerp(head.rotation.z, le.z, 0.1);
   }
 
   const clock = new THREE.Clock();
@@ -353,53 +349,40 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
   function frame() {
     raf = requestAnimationFrame(frame);
-    const dt = Math.min(0.05, clock.getDelta());
+    const t = clock.elapsedTime;
 
-    scrollSmooth += (scrollTarget - scrollSmooth) * (reduceMotion ? 1 : 0.055);
-    pointerSmoothX += (pointerX - pointerSmoothX) * 0.045;
-    pointerSmoothY += (pointerY - pointerSmoothY) * 0.045;
+    scrollSmooth += (scrollTarget - scrollSmooth) * (reduceMotion ? 1 : 0.05);
+    pointerSmoothX += (pointerX - pointerSmoothX) * 0.1;
+    pointerSmoothY += (pointerY - pointerSmoothY) * 0.1;
 
-    const shot = sampleCamera(scrollSmooth);
-
-    // Subtle pointer parallax — keep robot fully visible (small offsets)
-    const parallax = isMobile ? 0.12 : 0.22;
-    camPos.copy(shot.pos);
-    camPos.x += pointerSmoothX * parallax;
-    camPos.y += -pointerSmoothY * parallax * 0.35;
-
-    camLook.copy(shot.look);
-    camLook.x += pointerSmoothX * 0.06;
-    camLook.y += -pointerSmoothY * 0.04;
-
-    camera.position.copy(camPos);
-    camera.lookAt(camLook);
-    if (Math.abs(camera.fov - shot.fov) > 0.05) {
-      camera.fov = shot.fov;
-      camera.updateProjectionMatrix();
-    }
-
-    if (robotRoot) {
-      const floatY = Math.sin(clock.elapsedTime * 0.75) * 0.035;
-      robotRoot.position.set(0, floatY, 0);
-      robotRoot.rotation.y = shot.robotYaw + pointerSmoothX * 0.12;
-      robotRoot.rotation.z = pointerSmoothX * 0.03;
-      robotRoot.rotation.x = -pointerSmoothY * 0.025;
-    }
-
-    if (ring) {
-      ring.rotation.z = clock.elapsedTime * 0.22;
-      ring.material.opacity = 0.22 + Math.sin(clock.elapsedTime) * 0.08;
-    }
-
-    if (mixer && !reduceMotion) mixer.update(dt);
-
-    rim.intensity = 14 + scrollSmooth * 12;
-    fill.intensity = 0.45 + scrollSmooth * 0.4;
-    key.position.set(
-      3.5 + Math.sin(scrollSmooth * Math.PI * 2) * 1.2,
-      6,
-      4 + Math.cos(scrollSmooth * Math.PI * 2) * 0.8
+    // Idle float + gentle bob (face still forward)
+    const bob = Math.sin(t * 1.1) * 0.04;
+    robot.position.y = bob;
+    robot.rotation.z = Math.sin(t * 0.7) * 0.02;
+    // Slight body lean with scroll — never turns back
+    robot.rotation.y = THREE.MathUtils.lerp(
+      robot.rotation.y,
+      Math.sin(scrollSmooth * Math.PI) * 0.12,
+      0.04
     );
+
+    if (!reduceMotion) updateHeadLook();
+
+    ring.rotation.z = t * 0.2;
+    ring.material.opacity = 0.28 + Math.sin(t) * 0.08;
+
+    // Subtle camera parallax with scroll (stay in front)
+    const mobile = isMobile();
+    if (mobile) {
+      camera.position.x = pointerSmoothX * 0.15;
+      camera.position.y = 1.35 + scrollSmooth * 0.12 - pointerSmoothY * 0.08;
+      camera.lookAt(0, 1.2 + bob * 0.3, 0);
+    } else {
+      camera.position.x = -0.15 + pointerSmoothX * 0.12;
+      camera.position.y = 1.4 + scrollSmooth * 0.15 - pointerSmoothY * 0.1;
+      camera.position.z = 5.5 - scrollSmooth * 0.25;
+      camera.lookAt(1.55 + pointerSmoothX * 0.05, 1.25 + bob * 0.2, 0);
+    }
 
     renderer.render(scene, camera);
   }
@@ -407,27 +390,22 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
   window.addEventListener('scroll', readScroll, { passive: true });
   window.addEventListener('resize', resize);
   window.addEventListener('pointermove', onPointer, { passive: true });
+  window.addEventListener('touchmove', onPointer, { passive: true });
 
   resize();
   readScroll();
-  loadRobot().then(() => {
-    if (reduceMotion) {
-      scrollSmooth = scrollTarget;
-      const shot = sampleCamera(scrollSmooth);
-      camera.position.copy(shot.pos);
-      camera.lookAt(shot.look);
-      camera.fov = shot.fov;
-      camera.updateProjectionMatrix();
-      renderer.render(scene, camera);
-      return;
-    }
+  host.classList.add('is-ready');
+
+  if (reduceMotion) {
+    renderer.render(scene, camera);
+  } else {
     frame();
-  });
+  }
 
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       cancelAnimationFrame(raf);
-    } else if (!reduceMotion && ready) {
+    } else if (!reduceMotion) {
       clock.getDelta();
       frame();
     }
