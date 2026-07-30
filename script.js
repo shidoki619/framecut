@@ -16,40 +16,52 @@ function showReveal(el, delay = 0) {
   el.classList.add('visible');
 }
 
-// Mobile / Telegram in-app browser: IntersectionObserver often fails → content stays opacity:0
-const forceRevealNow =
-  window.matchMedia('(max-width: 900px)').matches
-  || window.matchMedia('(pointer: coarse)').matches
-  || /Telegram/i.test(navigator.userAgent);
+function isInViewport(el) {
+  const r = el.getBoundingClientRect();
+  return r.bottom > 0 && r.top < (window.innerHeight || document.documentElement.clientHeight);
+}
 
-if (forceRevealNow) {
+// Phone / Telegram mobile: show immediately (IO often broken there).
+// Desktop: keep scroll-in animations.
+const isNarrow = window.matchMedia('(max-width: 900px)').matches;
+const isTelegramMobile =
+  /Telegram/i.test(navigator.userAgent)
+  && (/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent) || isNarrow);
+
+if (isNarrow || isTelegramMobile) {
   revealElements.forEach(el => showReveal(el));
 } else {
   const revealObserver = new IntersectionObserver(
     entries => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const parent = entry.target.parentElement;
-          const siblings = parent ? [...parent.querySelectorAll(':scope > .reveal')] : [];
-          const index = Math.max(0, siblings.indexOf(entry.target));
-          showReveal(entry.target, index * 0.06);
-          revealObserver.unobserve(entry.target);
-        }
+        if (!entry.isIntersecting) return;
+        const siblings = entry.target.parentElement
+          ? [...entry.target.parentElement.querySelectorAll('.reveal')]
+          : [];
+        const index = Math.max(0, siblings.indexOf(entry.target));
+        showReveal(entry.target, index * 0.08);
+        revealObserver.unobserve(entry.target);
       });
     },
-    { threshold: 0.05, rootMargin: '0px 0px 80px 0px' }
+    { threshold: 0.12, rootMargin: '0px 0px -10% 0px' }
   );
 
-  revealElements.forEach(el => revealObserver.observe(el));
+  revealElements.forEach(el => {
+    if (el.closest('.hero')) return;
+    revealObserver.observe(el);
+  });
 
-  // Fallback: if still hidden after 1.5s, force show
+  // Safety only for elements already on screen that never got .visible
   setTimeout(() => {
-    document.querySelectorAll('.reveal:not(.visible)').forEach(el => showReveal(el));
-  }, 1500);
+    document.querySelectorAll('.reveal:not(.visible)').forEach(el => {
+      if (isInViewport(el)) showReveal(el);
+    });
+  }, 2500);
 }
 
+// Hero always animates in on load (PC + mobile)
 document.querySelectorAll('.hero .reveal').forEach((el, i) => {
-  showReveal(el, i * 0.08);
+  showReveal(el, i * 0.1);
 });
 
 function animateTimecode() {
