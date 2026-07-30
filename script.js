@@ -9,35 +9,47 @@ window.addEventListener('scroll', () => {
 /* Mobile nav is initialized in auth-ui.js */
 
 const revealElements = document.querySelectorAll('.reveal');
-const revealObserver = new IntersectionObserver(
-  entries => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        const siblings = [...entry.target.parentElement.querySelectorAll('.reveal')];
-        const index = siblings.indexOf(entry.target);
-        entry.target.style.transitionDelay = `${index * 0.08}s`;
-        entry.target.classList.add('visible');
-        revealObserver.unobserve(entry.target);
-      }
-    });
-  },
-  { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
-);
 
-revealElements.forEach(el => revealObserver.observe(el));
+function showReveal(el, delay = 0) {
+  if (!el) return;
+  if (delay) el.style.transitionDelay = `${delay}s`;
+  el.classList.add('visible');
+}
 
-document.querySelectorAll('.reveal').forEach(el => {
-  if (el.closest('.hero')) {
-    el.classList.add('visible');
-    el.style.opacity = '';
-    el.style.transform = '';
-  }
-});
+// Mobile / Telegram in-app browser: IntersectionObserver often fails → content stays opacity:0
+const forceRevealNow =
+  window.matchMedia('(max-width: 900px)').matches
+  || window.matchMedia('(pointer: coarse)').matches
+  || /Telegram/i.test(navigator.userAgent);
 
-const heroReveals = document.querySelectorAll('.hero .reveal');
-heroReveals.forEach((el, i) => {
-  el.style.transitionDelay = `${i * 0.1}s`;
-  requestAnimationFrame(() => el.classList.add('visible'));
+if (forceRevealNow) {
+  revealElements.forEach(el => showReveal(el));
+} else {
+  const revealObserver = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const parent = entry.target.parentElement;
+          const siblings = parent ? [...parent.querySelectorAll(':scope > .reveal')] : [];
+          const index = Math.max(0, siblings.indexOf(entry.target));
+          showReveal(entry.target, index * 0.06);
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.05, rootMargin: '0px 0px 80px 0px' }
+  );
+
+  revealElements.forEach(el => revealObserver.observe(el));
+
+  // Fallback: if still hidden after 1.5s, force show
+  setTimeout(() => {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(el => showReveal(el));
+  }, 1500);
+}
+
+document.querySelectorAll('.hero .reveal').forEach((el, i) => {
+  showReveal(el, i * 0.08);
 });
 
 function animateTimecode() {

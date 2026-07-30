@@ -1239,6 +1239,9 @@ body.menu-open {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .youtube-channels-strip {
@@ -1461,6 +1464,11 @@ body.menu-open {
   background: rgba(139, 92, 246, 0.08);
   border: 1px solid rgba(139, 92, 246, 0.28);
   border-radius: var(--radius-lg);
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -2103,6 +2111,16 @@ body.menu-open {
   transform: translateY(0);
 }
 
+/* Never leave portfolio / key blocks invisible (Telegram, broken IO) */
+@media (max-width: 900px) {
+  .reveal,
+  .reveal:not(.visible) {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .hero {
@@ -2129,7 +2147,7 @@ body.menu-open {
     flex-wrap: wrap;
   }
 
-  /* Premiere mock is unreadable on small screens — hide it */
+  /* Premiere mock is unreadable on small screens - hide it */
   .hero-visual {
     display: none !important;
   }

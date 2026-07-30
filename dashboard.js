@@ -228,7 +228,7 @@ function renderOrderDetail(order) {
       </div>
 
       ${isClosed ? `
-        <p class="orders-readonly-note">Заявка закрыта — переписку можно читать, но отправить сообщение нельзя.</p>
+        <p class="orders-readonly-note">Заявка закрыта - переписку можно читать, но отправить сообщение нельзя.</p>
       ` : `
         <form class="order-reply-form" data-id="${order.id}">
           <label class="form-field">

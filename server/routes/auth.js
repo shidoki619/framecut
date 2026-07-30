@@ -12,7 +12,7 @@ router.post('/register', async (req, res) => {
     const { name, email, password } = req.body;
 
     if (!name?.trim() || !email?.trim() || !password || password.length < 6) {
-      return res.status(400).json({ error: 'Заполните все поля. Пароль — минимум 6 символов.' });
+      return res.status(400).json({ error: 'Заполните все поля. Пароль - минимум 6 символов.' });
     }
 
     const normalizedEmail = email.trim().toLowerCase();

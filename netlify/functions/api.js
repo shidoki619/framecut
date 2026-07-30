@@ -69,7 +69,7 @@ exports.handler = async (event) => {
     if (method === 'POST' && path === '/api/auth/register') {
       const { name, email, password } = body;
       if (!name?.trim() || !email?.trim() || !password || password.length < 6) {
-        return json(400, { error: 'Заполните все поля. Пароль — минимум 6 символов.' });
+        return json(400, { error: 'Заполните все поля. Пароль - минимум 6 символов.' });
       }
       const normalizedEmail = email.trim().toLowerCase();
       if (await store.findUserByEmail(normalizedEmail)) {

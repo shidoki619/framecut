@@ -163,13 +163,13 @@ exports.handler = async (event) => {
         '<b>FrameCut бот</b>',
         '',
         '<b>Заявки</b>',
-        '/orders — открытые заявки',
-        '/order ID — детали заявки',
+        '/orders - открытые заявки',
+        '/order ID - детали заявки',
         '',
         '<b>Статусы</b>',
-        '/work ID — взять в работу',
-        '/close ID — закрыть заявку',
-        '/open ID — открыть снова',
+        '/work ID - взять в работу',
+        '/close ID - закрыть заявку',
+        '/open ID - открыть снова',
         '',
         '<b>Ответ клиенту</b>',
         'Реплай на уведомление о заявке',
@@ -203,7 +203,7 @@ exports.handler = async (event) => {
       chatId,
       [
         `<b>${order.name || 'Гость'}</b>`,
-        `✈️ ${order.contact || '—'}`,
+        `✈️ ${order.contact || '-'}`,
         `📁 ${type}`,
         `📌 ${status}`,
         '',
@@ -270,7 +270,7 @@ exports.handler = async (event) => {
     } else {
       await telegram.sendMessage(
         chatId,
-        `✅ Ответ сохранён. Гость без аккаунта — напишите в Telegram:\n<b>${order.contact}</b>`
+        `✅ Ответ сохранён. Гость без аккаунта - напишите в Telegram:\n<b>${order.contact}</b>`
       );
     }
     return ok();

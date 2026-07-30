@@ -53,14 +53,14 @@ async function notifyNewOrder(order) {
     '🆕 <b>Новая заявка</b>',
     '',
     `👤 <b>${escapeHtml(order.name || 'Гость')}</b>`,
-    `✈️ ${escapeHtml(order.contact || '—')}`,
+    `✈️ ${escapeHtml(order.contact || '-')}`,
     `📁 ${escapeHtml(TYPE_LABELS[order.type] || order.type)}`,
     '',
     escapeHtml(order.message),
     '',
     `<code>${order.id}</code>`,
     '',
-    '↩️ <i>Ответьте реплаем — клиент увидит ответ в личном кабинете</i>',
+    '↩️ <i>Ответьте реплаем - клиент увидит ответ в личном кабинете</i>',
   ].join('\n');
 
   const result = await sendMessage(ADMIN_CHAT_ID, text, {

@@ -49,7 +49,7 @@ function formatOrderBrief(order, index) {
   const type = TYPE_LABELS[order.type] || order.type;
   const status = STATUS_LABELS[order.status] || order.status;
   const prefix = index != null ? `${index}. ` : '';
-  return `${prefix}<b>${order.name || 'Гость'}</b> · ${type}\n📌 ${status} · ${order.contact || '—'}\n<code>${order.id}</code>`;
+  return `${prefix}<b>${order.name || 'Гость'}</b> · ${type}\n📌 ${status} · ${order.contact || '-'}\n<code>${order.id}</code>`;
 }
 
 module.exports = {

@@ -141,7 +141,7 @@ function renderOrderDetail(order) {
 
   const date = new Date(order.createdAt).toLocaleString('ru-RU');
   const client = order.name || 'Гость';
-  const contact = order.contact || order.userEmail || '—';
+  const contact = order.contact || order.userEmail || '-';
   const isClosed = order.status === 'done';
 
   detail.innerHTML = `
@@ -173,7 +173,7 @@ function renderOrderDetail(order) {
       </div>
 
       ${isClosed ? `
-        <p class="orders-readonly-note">Заявка закрыта. Чтобы ответить — смените статус на «В работе».</p>
+        <p class="orders-readonly-note">Заявка закрыта. Чтобы ответить - смените статус на «В работе».</p>
       ` : `
         <label class="form-field">
           <span>Ответ клиенту</span>
