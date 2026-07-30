@@ -8,21 +8,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260723">
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://unpkg.com/three@0.170.0/build/three.module.js"
-    }
-  }
-  </script>
+  <link rel="stylesheet" href="styles.css?v=20260720">
 </head>
 <body>
   <div class="noise"></div>
-  <div class="robot-bg" id="robotBg" aria-hidden="true">
-    <canvas id="robotCanvas"></canvas>
-    <div class="robot-bg-fade"></div>
-    <div class="robot-bg-vignette"></div>
+  <div class="bg-3d" aria-hidden="true">
+    <div class="bg-3d-floor"></div>
+    <div class="bg-3d-glow"></div>
   </div>
   <div class="gradient-orb orb-1"></div>
   <div class="gradient-orb orb-2"></div>
@@ -705,9 +697,9 @@
     </div>
   </footer>
 
-  <script type="module" src="robot-bg.js?v=20260723"></script>
-  <script src="auth.js?v=20260723"></script>
-  <script src="auth-ui.js?v=20260723"></script>
-  <script src="script.js?v=20260723"></script>
+  <script src="cursor-bg.js?v=20260720"></script>
+  <script src="auth.js?v=20260720"></script>
+  <script src="auth-ui.js?v=20260720"></script>
+  <script src="script.js?v=20260720"></script>
 </body>
 </html>
