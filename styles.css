@@ -73,6 +73,46 @@ svg {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+.robot-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.robot-bg.is-ready {
+  opacity: 1;
+}
+
+.robot-bg canvas {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+.robot-bg-fade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 72% 48%, rgba(139, 92, 246, 0.16), transparent 62%),
+    radial-gradient(ellipse 50% 40% at 20% 70%, rgba(34, 211, 238, 0.08), transparent 70%),
+    linear-gradient(180deg, rgba(10, 10, 15, 0.15) 0%, rgba(10, 10, 15, 0.55) 100%);
+}
+
+.robot-bg-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(10, 10, 15, 0.72) 0%, rgba(10, 10, 15, 0.25) 42%, rgba(10, 10, 15, 0.15) 70%, rgba(10, 10, 15, 0.55) 100%),
+    linear-gradient(180deg, rgba(10, 10, 15, 0.35) 0%, transparent 28%, transparent 72%, rgba(10, 10, 15, 0.65) 100%);
+}
+
+/* legacy grid bg (other pages / fallback) */
 .bg-3d {
   position: fixed;
   inset: 0;
@@ -2391,11 +2431,17 @@ body.menu-open {
     perspective: 600px;
   }
 
+  .robot-bg-vignette {
+    background:
+      linear-gradient(180deg, rgba(10, 10, 15, 0.45) 0%, rgba(10, 10, 15, 0.35) 40%, rgba(10, 10, 15, 0.75) 100%),
+      linear-gradient(90deg, rgba(10, 10, 15, 0.4) 0%, transparent 50%, rgba(10, 10, 15, 0.4) 100%);
+  }
+
   .orb-1,
   .orb-2 {
     width: 280px;
     height: 280px;
-    opacity: 0.7;
+    opacity: 0.55;
   }
 
   .hero-visual {
